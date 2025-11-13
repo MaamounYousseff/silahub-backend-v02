@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Scoring" />
+        <module name="UserAdmin" />
+        <module name="Interaction" />
+        <module name="SharedKernel" />
+        <module name="Feed" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Feed" options="-parameters" />
+      <module name="Interaction" options="-parameters" />
+      <module name="Scoring" options="-parameters" />
+      <module name="SharedKernel" options="-parameters" />
+      <module name="UserAdmin" options="-parameters" />
+      <module name="advertisement_app" options="" />
+    </option>
+  </component>
+</project>
