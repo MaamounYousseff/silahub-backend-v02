@@ -27,6 +27,7 @@
 		<module>Interaction</module>
 		<module>Scoring</module>
 		<module>SharedKernel</module>
+		<module>App</module>
 	</modules>
 	<scm>
 		<connection/>
