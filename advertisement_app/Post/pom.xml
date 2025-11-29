@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>SharedKernel</artifactId>
+    <artifactId>Post</artifactId>
 
     <properties>
         <maven.compiler.source>24</maven.compiler.source>
