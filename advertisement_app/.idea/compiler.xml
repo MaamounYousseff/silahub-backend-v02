@@ -12,11 +12,11 @@
         <module name="Post" />
         <module name="Scoring" />
         <module name="Shared" />
-        <module name="Notification" />
         <module name="Feed" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Notification" target="21" />
       <module name="Security" target="21" />
       <module name="SharedKernel" target="21" />
     </bytecodeTargetLevel>

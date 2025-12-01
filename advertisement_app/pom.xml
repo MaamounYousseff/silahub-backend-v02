@@ -29,7 +29,6 @@
         <module>Post</module>
 		<module>App</module>
 		<module>Shared</module>
-		<module>Notification</module>
 	</modules>
 	<scm>
 		<connection/>
