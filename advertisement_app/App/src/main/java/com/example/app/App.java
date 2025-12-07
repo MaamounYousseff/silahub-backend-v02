@@ -4,7 +4,6 @@ package com.example.app;
 import com.example.feed.FeedConfig;
 import com.example.interaction.InteractionConfig;
 import com.example.post.PostConfig;
-import com.example.post.domain.model.Post;
 import com.example.scoring.ScoringConfig;
 import com.example.shared.SharedConfig;
 import com.example.test.TestConfig;
