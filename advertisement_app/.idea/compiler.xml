@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="App" />
         <module name="UserAdmin" />
+        <module name="Test" />
         <module name="Interaction" />
         <module name="Post" />
         <module name="Scoring" />
@@ -32,6 +33,7 @@
       <module name="Security" options="-parameters" />
       <module name="Shared" options="-parameters" />
       <module name="SharedKernel" options="-parameters" />
+      <module name="Test" options="-parameters" />
       <module name="UserAdmin" options="-parameters" />
       <module name="advertisement_app" options="" />
     </option>

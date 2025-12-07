@@ -1,0 +1,33 @@
+package com.example.post.domain.mapper;
+
+import com.example.post.domain.model.Post;
+import com.example.post.web.PostCreateRequest;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+public class PostMapper
+{
+
+    public static Post fromPostCreateRequest(PostCreateRequest request, UUID creatorId) {
+        Post post = new Post();
+
+        post.setCreatorId(creatorId);
+        post.setThumbnailUrl(request.getThumbnailUrl());
+        post.setVideoUrl(request.getVideoUrl());
+        post.setImageUrls(request.getImageUrls());
+        post.setTitle(request.getTitle());
+        post.setDescription(request.getDescription());
+        post.setContentType(request.getContentType());
+        post.setIsVisible(request.getIsVisible());
+
+        // Defaults for creation
+        post.setIsActive(true);
+        OffsetDateTime now = OffsetDateTime.now();
+        post.setCreatedAt(now);
+        post.setUpdatedAt(now);
+        post.setBoostedAt(now);
+
+        return post;
+    }
+}

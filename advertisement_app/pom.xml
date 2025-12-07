@@ -29,7 +29,8 @@
         <module>Post</module>
 		<module>App</module>
 		<module>Shared</module>
-	</modules>
+        <module>Test</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
