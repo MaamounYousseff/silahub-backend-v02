@@ -1,7 +1,9 @@
 package com.example.interaction.logic;
 
+import com.example.interaction.domain.command.ClickPost;
 import com.example.interaction.domain.command.ToggleLikePost;
 import com.example.interaction.domain.command.ToggleUpvotePost;
+import com.example.interaction.domain.command.WatchPost;
 import com.example.interaction.domain.repo.PostInteractionRepo;
 import com.example.interaction.domain.repo.PostLikeRepo;
 import com.example.interaction.domain.repo.PostUpvoteRepo;
@@ -17,9 +19,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
+import static com.example.interaction.domain.Constant.*;
 
 
 @Service
@@ -37,9 +40,6 @@ public class InteractionConsumer
     private ObjectMapper objectMapper;
     @Autowired
     private ApplicationEventPublisher publisher;
-
-    public static final String TOPIC_LIKE_NAME = "post_like_toggle";
-    public static final String TOPIC_UPVOTE_NAME = "post_upvote_toggle";
 
 
     @JmsListener(destination = TOPIC_LIKE_NAME)
@@ -98,7 +98,6 @@ public class InteractionConsumer
         }
     }
 
-
     private void adjustPostUpvoteCount(UUID postId, ToggleUpvoteState action) {
         switch (action) {
             case INSERT,  UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotes(postId);
@@ -110,6 +109,23 @@ public class InteractionConsumer
         publisher.publishEvent(
                 new InteractionEventToggleUpvote(postId, postId, action, OffsetDateTime.now())
         );
+    }
+
+
+
+    @JmsListener(destination = TOPIC_WATCH_NAME)
+    @Transactional
+    public void postWatch(String json) throws JsonProcessingException {
+        WatchPost watchPost = objectMapper.readValue(json, WatchPost.class);
+        this.postInteractionsRepo.incrementWatchSeconds(watchPost.getPostId(),watchPost.getWatchTime());
+    }
+
+
+    @JmsListener(destination = TOPIC_CLICK_NAME)
+    @Transactional
+    public void postClick(String json) throws JsonProcessingException {
+        ClickPost clickPost = objectMapper.readValue(json, ClickPost.class);
+        this.postInteractionsRepo.incrementClick(clickPost.getPostId());
     }
 
 }

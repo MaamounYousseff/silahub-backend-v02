@@ -1,10 +1,11 @@
 package com.example.interaction.logic;
 
 
+import com.example.interaction.domain.command.ClickPost;
 import com.example.interaction.domain.command.ToggleLikePost;
 import com.example.interaction.domain.command.ToggleUpvotePost;
+import com.example.interaction.domain.command.WatchPost;
 import com.example.shared.domain.event.interaction.InteractionEventClick;
-import com.example.shared.domain.event.interaction.InteractionEventToggleUpvote;
 import com.example.shared.domain.event.interaction.InteractionEventWatchTime;
 import com.example.shared.security.CurrentUserContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import static com.example.interaction.domain.Constant.*;
 
 @Service
 @Slf4j
@@ -31,15 +34,18 @@ public class InteractionService
     @Autowired
     private ObjectMapper objectMapper;
 
-    public static final String TOPIC_LIKE_NAME = "post_like_toggle";
-    public static final String TOPIC_UPVOTE_NAME = "post_upvote_toggle";
 
 
-    public void feedPostClicked(UUID feedPostId){
-//      TODO  make the producer publish  to  red panda
-
-//        publish a event to EventBus :
+    public void feedPostClicked(UUID feedPostId) throws JsonProcessingException {
+        ClickPost clickPost = new ClickPost(feedPostId);
+        this.jmsTemplate.convertAndSend(  TOPIC_CLICK_NAME , objectMapper.writeValueAsString(clickPost) );
         this.publisher.publishEvent(new InteractionEventClick(feedPostId, Instant.now().getEpochSecond()));
+    }
+
+    public void feedPostWatched(UUID feedPostId, Long watchTime) throws JsonProcessingException {
+        WatchPost watchPost = new WatchPost(feedPostId,watchTime);
+        this.jmsTemplate.convertAndSend(  TOPIC_WATCH_NAME , objectMapper.writeValueAsString(watchPost) );
+        this.publisher.publishEvent(new InteractionEventWatchTime(feedPostId, currentUserContext.getUserId()));
     }
 
     public void feedPostLikeToggle(UUID feedPostId) throws JsonProcessingException {
@@ -52,10 +58,5 @@ public class InteractionService
         jmsTemplate.convertAndSend( TOPIC_UPVOTE_NAME , objectMapper.writeValueAsString(toggleLikePost) );
     }
 
-    public void feedPostWatched(UUID feedPostId){
-//      TODO  make the producer publish  to  red panda
 
-//        publish a event to EventBus
-        this.publisher.publishEvent(new InteractionEventWatchTime(feedPostId, currentUserContext.getUserId()));
-    }
 }

@@ -44,4 +44,25 @@ public interface PostInteractionRepo extends JpaRepository<PostInteraction, UUID
         WHERE p.postId = :postId
     """)
     void decrementUpvotes(UUID postId);
+
+
+    @Modifying
+    @Query("""
+        UPDATE PostInteraction p
+        SET p.totalClicks = p.totalClicks + 1
+        WHERE p.postId = :postId
+    """)
+    void incrementClick(UUID postId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE PostInteraction p
+        SET p.totalWatchSeconds = p.totalWatchSeconds + :amount
+        WHERE p.postId = :postId
+    """)
+    void incrementWatchSeconds(UUID postId, long amount);
+
+
+
+
 }

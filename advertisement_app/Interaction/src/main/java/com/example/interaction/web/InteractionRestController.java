@@ -3,10 +3,7 @@ package com.example.interaction.web;
 import com.example.interaction.logic.InteractionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -20,8 +17,13 @@ public class InteractionRestController {
 
     // POST /api/interactions/click/{feedPostId}
     @PostMapping("/click/{feedPostId}")
-    public void clickPost(@PathVariable UUID feedPostId) {
+    public void clickPost(@PathVariable UUID feedPostId) throws JsonProcessingException {
         interactionService.feedPostClicked(feedPostId);
+    }
+    // POST /api/interactions/watch/{feedPostId}
+    @PostMapping("/watch/{feedPostId}")
+    public void watchPost(@PathVariable UUID feedPostId, @RequestParam("watchTime") Long watchTime) throws JsonProcessingException {
+        interactionService.feedPostWatched(feedPostId, watchTime);
     }
 
     // POST /api/interactions/like/{feedPostId}
@@ -36,9 +38,5 @@ public class InteractionRestController {
         interactionService.feedPostUpvoteToggle(feedPostId);
     }
 
-    // POST /api/interactions/watch/{feedPostId}
-    @PostMapping("/watch/{feedPostId}")
-    public void watchPost(@PathVariable UUID feedPostId) {
-        interactionService.feedPostWatched(feedPostId);
-    }
+
 }
