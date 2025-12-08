@@ -1,6 +1,7 @@
 package com.example.interaction.web;
 
 import com.example.interaction.logic.InteractionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +26,8 @@ public class InteractionRestController {
 
     // POST /api/interactions/like/{feedPostId}
     @PostMapping("/like/{feedPostId}")
-    public void likePost(@PathVariable UUID feedPostId) {
-        interactionService.feedPostLiked(feedPostId);
+    public void likePost(@PathVariable UUID feedPostId) throws JsonProcessingException {
+        interactionService.feedPostLikeToggle(feedPostId);
     }
 
     // POST /api/interactions/upvote/{feedPostId}

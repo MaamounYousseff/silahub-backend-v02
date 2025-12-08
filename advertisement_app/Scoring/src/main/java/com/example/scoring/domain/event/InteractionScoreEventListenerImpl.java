@@ -16,7 +16,7 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
 
     @Override
     @EventListener
-    public void onFeedPostLiked(InteractionEventLike eventLike) {
+    public void onFeedPostLiked(InteractionEventToggleLike eventLike) {
         System.out.println("Score receive like");
     }
 

@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostInteractions {
+public class PostInteraction {
 
     @Id
     @Column(name = "post_id", nullable = false)
