@@ -3,8 +3,8 @@ package com.example.shared.domain.event.interaction;
 
 public interface InteractionEventListener
 {
-    void onFeedPostClicked(InteractionEventClick eventClick);
+    void onFeedPostClicked(InteractionEventPostClicked eventClick);
     void onFeedPostLiked(InteractionEventToggleLike eventLike);
     void onFeedPostUpvoted(InteractionEventToggleUpvote eventUpvote);
-    void onFeedPostWatched(InteractionEventWatchTime eventWatchTime);
+    void onFeedPostWatched(InteractionEventPostWatched eventWatchTime);
 }

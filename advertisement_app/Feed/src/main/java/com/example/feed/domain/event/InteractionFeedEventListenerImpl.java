@@ -1,9 +1,9 @@
 package com.example.feed.domain.event;
 
-import com.example.shared.domain.event.interaction.InteractionEventClick;
+import com.example.shared.domain.event.interaction.InteractionEventPostClicked;
 import com.example.shared.domain.event.interaction.InteractionEventToggleLike;
 import com.example.shared.domain.event.interaction.InteractionEventToggleUpvote;
-import com.example.shared.domain.event.interaction.InteractionEventWatchTime;
+import com.example.shared.domain.event.interaction.InteractionEventPostWatched;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ public class InteractionFeedEventListenerImpl implements com.example.shared.doma
 
     @Override
     @EventListener
-    public void onFeedPostClicked(InteractionEventClick eventClick) {
+    public void onFeedPostClicked(InteractionEventPostClicked eventClick) {
         System.out.println("Feed receive click");
     }
 
@@ -31,7 +31,7 @@ public class InteractionFeedEventListenerImpl implements com.example.shared.doma
 
     @Override
     @EventListener
-    public void onFeedPostWatched(InteractionEventWatchTime eventWatchTime) {
+    public void onFeedPostWatched(InteractionEventPostWatched eventWatchTime) {
         System.out.println("Feed receive watch");
     }
 

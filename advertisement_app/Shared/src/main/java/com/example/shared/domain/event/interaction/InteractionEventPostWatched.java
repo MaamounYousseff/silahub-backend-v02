@@ -1,19 +1,18 @@
 package com.example.shared.domain.event.interaction;
 
 import lombok.Data;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-
 @Data
-public class InteractionEventClick {
-    private UUID feedPostId;
+public class InteractionEventPostWatched {
+    private UUID postId;
+    private Long watchTime;
     private OffsetDateTime timeStamp;
 
     // Manual constructor that sets timestamp automatically
-    public InteractionEventClick(UUID feedPostId) {
-        this.feedPostId = feedPostId;
+    public InteractionEventPostWatched(UUID postId, Long watchTime) {
+        this.postId = postId;
         this.timeStamp = OffsetDateTime.now();
     }
 }

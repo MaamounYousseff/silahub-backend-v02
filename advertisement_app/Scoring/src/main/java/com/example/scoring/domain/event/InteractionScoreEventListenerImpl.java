@@ -10,7 +10,7 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
 
     @Override
     @EventListener
-    public void onFeedPostClicked(InteractionEventClick eventClick) {
+    public void onFeedPostClicked(InteractionEventPostClicked eventClick) {
         System.out.println("Score receive click");
     }
 
@@ -28,7 +28,7 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
 
     @Override
     @EventListener
-    public void onFeedPostWatched(InteractionEventWatchTime eventWatchTime) {
+    public void onFeedPostWatched(InteractionEventPostWatched eventWatchTime) {
         System.out.println("Score receive watch");
     }
 
