@@ -39,7 +39,7 @@ public class InteractionService
     public void feedPostClicked(UUID feedPostId) throws JsonProcessingException {
         ClickPost clickPost = new ClickPost(feedPostId);
         this.jmsTemplate.convertAndSend(  TOPIC_CLICK_NAME , objectMapper.writeValueAsString(clickPost) );
-        this.publisher.publishEvent(new InteractionEventClick(feedPostId, Instant.now().getEpochSecond()));
+        this.publisher.publishEvent(new InteractionEventClick(feedPostId));
     }
 
     public void feedPostWatched(UUID feedPostId, Long watchTime) throws JsonProcessingException {

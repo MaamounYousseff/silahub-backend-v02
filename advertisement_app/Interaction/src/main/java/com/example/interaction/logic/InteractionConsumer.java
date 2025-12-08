@@ -72,7 +72,7 @@ public class InteractionConsumer
 
     private void publishToggleLikeEvent(UUID postId, ToggleLikeAction action) {
         publisher.publishEvent(
-                new InteractionEventToggleLike(postId, postId, action, OffsetDateTime.now())
+                new InteractionEventToggleLike(postId, postId, action )
         );
     }
 
@@ -107,7 +107,7 @@ public class InteractionConsumer
 
     private void publishToggleUpvoteEvent(UUID postId, ToggleUpvoteState action) {
         publisher.publishEvent(
-                new InteractionEventToggleUpvote(postId, postId, action, OffsetDateTime.now())
+                new InteractionEventToggleUpvote(postId, postId, action)
         );
     }
 

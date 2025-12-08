@@ -1,14 +1,19 @@
 package com.example.shared.domain.event.interaction;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
+
 @Data
-@AllArgsConstructor
-public class InteractionEventClick
-{
+public class InteractionEventClick {
     private UUID feedPostId;
-    private Long timeStamp;
+    private OffsetDateTime timeStamp;
+
+    // Manual constructor that sets timestamp automatically
+    public InteractionEventClick(UUID feedPostId) {
+        this.feedPostId = feedPostId;
+        this.timeStamp = OffsetDateTime.now();
+    }
 }

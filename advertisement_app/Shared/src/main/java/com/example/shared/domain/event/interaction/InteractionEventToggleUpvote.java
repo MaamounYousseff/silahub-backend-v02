@@ -7,13 +7,17 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-public class InteractionEventToggleUpvote
-{
+public class InteractionEventToggleUpvote {
     private UUID feedPostId;
     private UUID promoterId;
     private ToggleUpvoteState toggleUpvoteState;
-
     private OffsetDateTime timeStamp;
 
+    // Manual constructor that sets timestamp automatically
+    public InteractionEventToggleUpvote(UUID feedPostId, UUID promoterId, ToggleUpvoteState toggleUpvoteState) {
+        this.feedPostId = feedPostId;
+        this.promoterId = promoterId;
+        this.toggleUpvoteState = toggleUpvoteState;
+        this.timeStamp = OffsetDateTime.now();
+    }
 }
