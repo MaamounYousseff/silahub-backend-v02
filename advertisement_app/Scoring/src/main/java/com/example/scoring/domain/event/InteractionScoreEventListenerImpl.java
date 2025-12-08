@@ -22,7 +22,7 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
 
     @Override
     @EventListener
-    public void onFeedPostUpvoted(InteractionEventUpvote eventUpvote) {
+    public void onFeedPostUpvoted(InteractionEventToggleUpvote eventUpvote) {
         System.out.println("Score receive upvote");
     }
 

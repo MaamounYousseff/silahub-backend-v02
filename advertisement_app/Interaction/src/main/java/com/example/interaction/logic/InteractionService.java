@@ -2,8 +2,9 @@ package com.example.interaction.logic;
 
 
 import com.example.interaction.domain.command.ToggleLikePost;
+import com.example.interaction.domain.command.ToggleUpvotePost;
 import com.example.shared.domain.event.interaction.InteractionEventClick;
-import com.example.shared.domain.event.interaction.InteractionEventUpvote;
+import com.example.shared.domain.event.interaction.InteractionEventToggleUpvote;
 import com.example.shared.domain.event.interaction.InteractionEventWatchTime;
 import com.example.shared.security.CurrentUserContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +31,9 @@ public class InteractionService
     @Autowired
     private ObjectMapper objectMapper;
 
-    public static final String TOPIC_NAME = "post_like_toggle";
+    public static final String TOPIC_LIKE_NAME = "post_like_toggle";
+    public static final String TOPIC_UPVOTE_NAME = "post_upvote_toggle";
+
 
     public void feedPostClicked(UUID feedPostId){
 //      TODO  make the producer publish  to  red panda
@@ -41,14 +44,12 @@ public class InteractionService
 
     public void feedPostLikeToggle(UUID feedPostId) throws JsonProcessingException {
        ToggleLikePost toggleLikePost = new ToggleLikePost(feedPostId,currentUserContext.getUserId());
-       jmsTemplate.convertAndSend( TOPIC_NAME , objectMapper.writeValueAsString(toggleLikePost) );
+       jmsTemplate.convertAndSend( TOPIC_LIKE_NAME , objectMapper.writeValueAsString(toggleLikePost) );
   }
 
-    public void feedPostUpvoted(UUID feedPostId){
-//      TODO  make the producer publish  to  red panda
-
-//        publish a event to EventBus
-        this.publisher.publishEvent(new InteractionEventUpvote(feedPostId, currentUserContext.getUserId(), Instant.now().getEpochSecond()));
+    public void feedPostUpvoteToggle(UUID feedPostId) throws JsonProcessingException {
+        ToggleUpvotePost toggleLikePost = new ToggleUpvotePost(feedPostId,currentUserContext.getUserId());
+        jmsTemplate.convertAndSend( TOPIC_UPVOTE_NAME , objectMapper.writeValueAsString(toggleLikePost) );
     }
 
     public void feedPostWatched(UUID feedPostId){

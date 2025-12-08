@@ -1,10 +1,14 @@
 package com.example.interaction.logic;
 
 import com.example.interaction.domain.command.ToggleLikePost;
+import com.example.interaction.domain.command.ToggleUpvotePost;
 import com.example.interaction.domain.repo.PostInteractionRepo;
 import com.example.interaction.domain.repo.PostLikeRepo;
+import com.example.interaction.domain.repo.PostUpvoteRepo;
+import com.example.shared.domain.event.interaction.InteractionEventToggleUpvote;
 import com.example.shared.domain.event.interaction.ToggleLikeAction;
 import com.example.shared.domain.event.interaction.InteractionEventToggleLike;
+import com.example.shared.domain.event.interaction.ToggleUpvoteState;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,16 +30,19 @@ public class InteractionConsumer
     private PostInteractionRepo postInteractionsRepo;
     @Autowired
     private PostLikeRepo postLikeRepo;
+    @Autowired
+    private PostUpvoteRepo postUpvoteRepo;
 
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    public static final String TOPIC_NAME = "post_like_toggle";
+    public static final String TOPIC_LIKE_NAME = "post_like_toggle";
+    public static final String TOPIC_UPVOTE_NAME = "post_upvote_toggle";
 
 
-    @JmsListener(destination = TOPIC_NAME)
+    @JmsListener(destination = TOPIC_LIKE_NAME)
     @Transactional
     public void postToggleLike(String json) {
 
@@ -66,6 +73,42 @@ public class InteractionConsumer
     private void publishToggleLikeEvent(UUID postId, ToggleLikeAction action) {
         publisher.publishEvent(
                 new InteractionEventToggleLike(postId, postId, action, OffsetDateTime.now())
+        );
+    }
+
+
+    @JmsListener(destination = TOPIC_UPVOTE_NAME)
+    @Transactional
+    public void postToggleUpvote(String json) {
+
+        try {
+            ToggleUpvotePost payload = objectMapper.readValue(json, ToggleUpvotePost.class);
+            UUID promoterId = payload.getPromoterId();
+            UUID postId = payload.getPostId();
+
+            ToggleUpvoteState action = postUpvoteRepo.toggleUpvote(promoterId, postId);
+
+            adjustPostUpvoteCount(postId, action);
+
+            publishToggleUpvoteEvent(postId, action);
+
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse ToggleUpvoteState JSON", e);
+            throw new RuntimeException(e); // Ensure rollback
+        }
+    }
+
+
+    private void adjustPostUpvoteCount(UUID postId, ToggleUpvoteState action) {
+        switch (action) {
+            case INSERT,  UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotes(postId);
+            case UPDATE_REMOVED_UPVOTE -> postInteractionsRepo.decrementUpvotes(postId);
+        }
+    }
+
+    private void publishToggleUpvoteEvent(UUID postId, ToggleUpvoteState action) {
+        publisher.publishEvent(
+                new InteractionEventToggleUpvote(postId, postId, action, OffsetDateTime.now())
         );
     }
 

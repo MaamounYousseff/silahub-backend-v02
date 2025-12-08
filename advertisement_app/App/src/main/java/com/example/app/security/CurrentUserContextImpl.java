@@ -21,6 +21,6 @@ public class CurrentUserContextImpl implements CurrentUserContext {
     public UUID getUserId() {
 //        TODO.. UN-COMMIT
 //          return userIdHolder.get();
-        return UUID.fromString("79b1dd2b-6251-4ca1-92ca-0e6d4e7d35f2");
+        return UUID.fromString("bdebadda-afa7-42e0-b9ef-12479fa370e0");
     }
 }

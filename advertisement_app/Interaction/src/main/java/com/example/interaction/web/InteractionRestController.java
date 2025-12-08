@@ -32,8 +32,8 @@ public class InteractionRestController {
 
     // POST /api/interactions/upvote/{feedPostId}
     @PostMapping("/upvote/{feedPostId}")
-    public void upvotePost(@PathVariable UUID feedPostId) {
-        interactionService.feedPostUpvoted(feedPostId);
+    public void upvotePost(@PathVariable UUID feedPostId) throws JsonProcessingException {
+        interactionService.feedPostUpvoteToggle(feedPostId);
     }
 
     // POST /api/interactions/watch/{feedPostId}
