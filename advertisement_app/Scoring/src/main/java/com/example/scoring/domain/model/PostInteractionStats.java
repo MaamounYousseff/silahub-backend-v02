@@ -1,7 +1,6 @@
 package com.example.scoring.domain.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,14 +20,20 @@ public class PostInteractionStats {
     @Id
     private UUID postId;
 
-    private Long tempTotalLike;
-    private Long tempTotalUpvote;
-    private Long tempTotalClick;
-    private Long tempTotalWatchTime;
+    @Builder.Default
+    private Long tempTotalLike = 0L;
 
-    private Long scoreUpdateCount;
+    @Builder.Default
+    private Long tempTotalUpvote = 0L;
+
+    @Builder.Default
+    private Long tempTotalClick = 0L;
+
+    @Builder.Default
+    private Long tempTotalWatchTime = 0L;
+
+    @Builder.Default
+    private Long scoreUpdateCount = 0L;
 
     private Long boostedAt;
-
-
 }

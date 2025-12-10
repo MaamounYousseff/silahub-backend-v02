@@ -24,33 +24,33 @@ class PostInteractionStatsRepoTest {
 
     @Test
     @Commit
-    void shouldInsertDocumentUsingManualQuery() {
-        // given — exact data from your request
+    void savePost() {
         UUID postId = UUID.fromString("0162e9dc-77a6-4c33-bd72-d037941bc1b4");
 
         PostInteractionStats stats = PostInteractionStats.builder()
                 .postId(postId)
-                .tempTotalLike(2L)         // totalLikes = 2
-                .tempTotalUpvote(1L)       // totalUpvotes = 1
-                .tempTotalClick(2L)        // totalClicks = 2
-                .tempTotalWatchTime(780L)  // totalWatchTime = 780
-                .scoreUpdateCount(1L)      // totalViews = 1  (your field name)
-                .boostedAt(1760120195121L) // boostedAt
+                .tempTotalLike(2L)
+                .tempTotalUpvote(1L)
+                .tempTotalClick(2L)
+                .tempTotalWatchTime(1860L)
+                .scoreUpdateCount(1L)
+                .boostedAt(1760007395121L) // converted from timestamp
                 .build();
 
-        // when → insert manually
-        mongoTemplate.insert(stats, "post_interaction_stats");
+        // insert
+        mongoTemplate.save(stats, "post_interaction_stats");
 
-        // then → fetch manually using _id
+        // fetch
         Query query = new Query(Criteria.where("_id").is(postId));
-        PostInteractionStats result = mongoTemplate.findOne(query, PostInteractionStats.class);
+        PostInteractionStats result =
+                mongoTemplate.findOne(query, PostInteractionStats.class);
 
         assertNotNull(result);
         assertEquals(2L, result.getTempTotalLike());
         assertEquals(1L, result.getTempTotalUpvote());
         assertEquals(2L, result.getTempTotalClick());
-        assertEquals(780L, result.getTempTotalWatchTime());
+        assertEquals(1860L, result.getTempTotalWatchTime());
         assertEquals(1L, result.getScoreUpdateCount());
-        assertEquals(1760120195121L, result.getBoostedAt());
+        assertEquals(1760007395121L, result.getBoostedAt());
     }
 }

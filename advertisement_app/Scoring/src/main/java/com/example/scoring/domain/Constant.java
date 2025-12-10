@@ -8,4 +8,6 @@ public class Constant {
 
     public static final int MEDIUM_BUCKET_SCORE = 60000 ;
     public static final int LOW_BUCKET_SCORE = 15000;
+    public static final Long NEW_POST_SCORE = 100L;
+
 }

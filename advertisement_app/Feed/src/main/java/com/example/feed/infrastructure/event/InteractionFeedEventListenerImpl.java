@@ -1,4 +1,4 @@
-package com.example.feed.domain.event;
+package com.example.feed.infrastructure.event;
 
 import com.example.shared.domain.event.interaction.InteractionEventPostClicked;
 import com.example.shared.domain.event.interaction.InteractionEventToggleLike;

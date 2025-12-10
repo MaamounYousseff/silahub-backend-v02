@@ -3,6 +3,8 @@ package com.example.scoring.domain.model;
 import lombok.Getter;
 import java.util.UUID;
 
+import static com.example.scoring.domain.Constant.NEW_POST_SCORE;
+
 public class PostScoreBucket
 {
     @Getter
@@ -19,6 +21,12 @@ public class PostScoreBucket
     private Long boostedAt;
 
 //    Todo .. remove the score it should be just calculated internally so we just have a getter for it
+    public PostScoreBucket(UUID postId)
+    {
+        this.postId = postId;
+        this.score = NEW_POST_SCORE;
+    }
+
     public PostScoreBucket(UUID postId, Long score)
     {
         this.postId = postId;

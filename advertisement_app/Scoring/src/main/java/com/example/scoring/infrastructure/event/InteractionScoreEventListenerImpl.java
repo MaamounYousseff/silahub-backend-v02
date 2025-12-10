@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class InteractionScoreEventListenerImpl implements InteractionEventListener
 {
-
-
     @Autowired
     private ScoringService scoringService;
 

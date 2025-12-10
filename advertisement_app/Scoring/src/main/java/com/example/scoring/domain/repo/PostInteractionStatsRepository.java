@@ -44,4 +44,12 @@ public class PostInteractionStatsRepository {
         PostInteractionStats stats = mongoTemplate.findOne(query, PostInteractionStats.class);
         return Optional.ofNullable(stats);
     }
+
+    /**
+     * Save PostInteractionStats into MongoDB.
+     */
+    public PostInteractionStats save(PostInteractionStats stats) {
+        return mongoTemplate.save(stats, "post_interaction_stats");
+    }
+
 }
