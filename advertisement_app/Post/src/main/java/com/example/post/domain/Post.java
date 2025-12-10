@@ -1,4 +1,4 @@
-package com.example.post.domain.model;
+package com.example.post.domain;
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,6 +49,9 @@ public class Post {
 
     @Column(name = "is_visible", nullable = false)
     private Boolean isVisible;
+
+    @Column(name = "status", nullable = false)
+    private String status;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;

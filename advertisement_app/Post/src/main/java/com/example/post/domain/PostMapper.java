@@ -1,6 +1,5 @@
-package com.example.post.domain.mapper;
+package com.example.post.domain;
 
-import com.example.post.domain.model.Post;
 import com.example.post.web.PostCreateRequest;
 
 import java.time.OffsetDateTime;
@@ -26,6 +25,7 @@ public class PostMapper
         OffsetDateTime now = OffsetDateTime.now();
         post.setCreatedAt(now);
         post.setUpdatedAt(now);
+        post.setStatus(PostStatus.DRAFT.name().toLowerCase());
 
         return post;
     }
