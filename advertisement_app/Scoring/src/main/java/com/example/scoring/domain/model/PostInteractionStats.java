@@ -33,7 +33,7 @@ public class PostInteractionStats {
     private Long tempTotalWatchTime = 0L;
 
     @Builder.Default
-    private Long scoreUpdateCount = 0L;
+    private Long scoreUpdateCount = 1L;
 
     private Long boostedAt;
 }

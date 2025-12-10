@@ -16,6 +16,7 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
     @EventListener
     public void onFeedPostClicked(InteractionEventPostClicked eventClick) {
         System.out.println("Score receive click");
+        scoringService.processClick(eventClick);
     }
 
     @Override
@@ -29,15 +30,13 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
     @EventListener
     public void onFeedPostLiked(InteractionEventToggleLike eventLike) {
         System.out.println("Score receive like");
+        scoringService.processLike(eventLike);
     }
 
     @Override
     @EventListener
     public void onFeedPostUpvoted(InteractionEventToggleUpvote eventUpvote) {
         System.out.println("Score receive upvote");
+//        scoringService.processUpvote(eventUpvote);
     }
-
-
-
-
 }

@@ -8,12 +8,12 @@ import java.util.UUID;
 
 @Data
 public class InteractionEventPostClicked {
-    private UUID feedPostId;
+    private UUID postId;
     private OffsetDateTime timeStamp;
 
     // Manual constructor that sets timestamp automatically
-    public InteractionEventPostClicked(UUID feedPostId) {
-        this.feedPostId = feedPostId;
+    public InteractionEventPostClicked(UUID postId) {
+        this.postId = postId;
         this.timeStamp = OffsetDateTime.now();
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @ComponentScan("com.example.feed")
 public class FeedConfig
 {
-    @Bean
+    @Bean(name = "feedRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory)
     {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

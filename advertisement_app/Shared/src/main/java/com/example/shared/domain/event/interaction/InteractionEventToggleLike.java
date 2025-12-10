@@ -7,14 +7,14 @@ import java.util.UUID;
 
 @Data
 public class InteractionEventToggleLike {
-    private UUID feedPostId;
+    private UUID postId;
     private UUID explorerId;
     private ToggleLikeAction toggleLikeAction;
     private OffsetDateTime timeStamp;
 
     // Manual constructor that sets timestamp automatically
-    public InteractionEventToggleLike(UUID feedPostId, UUID explorerId, ToggleLikeAction toggleLikeAction) {
-        this.feedPostId = feedPostId;
+    public InteractionEventToggleLike(UUID postId, UUID explorerId, ToggleLikeAction toggleLikeAction) {
+        this.postId = postId;
         this.explorerId = explorerId;
         this.toggleLikeAction = toggleLikeAction;
         this.timeStamp = OffsetDateTime.now();

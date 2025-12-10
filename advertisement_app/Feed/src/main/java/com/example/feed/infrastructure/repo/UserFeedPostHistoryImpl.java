@@ -4,6 +4,7 @@ import com.example.feed.domain.repo.UserFeedPostHistory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -12,19 +13,15 @@ import java.util.List;
 import java.util.UUID;
 
 //NOT TESTED
-@Repository
-public class UserFeedPostHistoryImpl implements UserFeedPostHistory
+@Repository public class UserFeedPostHistoryImpl implements UserFeedPostHistory
 {
 
     @Autowired
+    @Qualifier("feedRedisTemplate")
     private  RedisTemplate<String, Object> redisTemplate;
     private static final String CACHE_KEY = "feed:history:"; // Redis key prefix
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    public UserFeedPostHistoryImpl(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 
     /**
      * Add a new user with a list of posts seen.

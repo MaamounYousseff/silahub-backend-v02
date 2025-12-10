@@ -3,6 +3,7 @@ package com.example.scoring.infrastructure.repo;
 import com.example.scoring.domain.model.PostScoreBucket;
 import com.example.scoring.domain.repo.BucketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ public class BucketRepositoryImpl implements BucketRepository
     private  ZSetOperations<String, Object> zSetOps;
 
     @Autowired
-    public BucketRepositoryImpl(RedisTemplate<String, Object> redisTemplate) {
+    public BucketRepositoryImpl(@Qualifier("scoringRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.zSetOps = redisTemplate.opsForZSet();
     }
