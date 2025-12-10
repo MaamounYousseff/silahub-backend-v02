@@ -11,8 +11,6 @@ import org.springframework.test.annotation.Commit;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = com.example.feed.FeedConfig.class)
 @ComponentScan("com.example.feed")

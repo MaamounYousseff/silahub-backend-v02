@@ -1,4 +1,3 @@
-import com.example.feed.domain.model.FeedPost;
 import com.example.feed.domain.repo.UserFeedPostHistory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
