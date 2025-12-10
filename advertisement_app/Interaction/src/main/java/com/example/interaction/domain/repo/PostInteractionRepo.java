@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Repository
@@ -32,11 +33,18 @@ public interface PostInteractionRepo extends JpaRepository<PostInteraction, UUID
     @Query("""
     UPDATE PostInteraction p
     SET p.totalUpvotes = p.totalUpvotes + 1,
-        p.boostedAt = CURRENT_TIMESTAMP
+        p.boostedAt = :boostedAt
     WHERE p.postId = :postId
 """)
-    void incrementUpvotesAndBoost(UUID postId);
+    void incrementUpvotesAndBoost(UUID postId, OffsetDateTime boostedAt);
 
+    @Modifying
+    @Query("""
+    UPDATE PostInteraction p
+    SET p.totalUpvotes = p.totalUpvotes + 1
+    WHERE p.postId = :postId
+""")
+    void incrementUpvotes(UUID postId);
 
 
     @Modifying

@@ -4,6 +4,7 @@ import com.example.interaction.domain.command.ClickPost;
 import com.example.interaction.domain.command.ToggleLikePost;
 import com.example.interaction.domain.command.ToggleUpvotePost;
 import com.example.interaction.domain.command.WatchPost;
+import com.example.interaction.domain.model.PostInteraction;
 import com.example.interaction.domain.repo.PostInteractionRepo;
 import com.example.interaction.domain.repo.PostLikeRepo;
 import com.example.interaction.domain.repo.PostUpvoteRepo;
@@ -20,6 +21,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.interaction.domain.Constant.*;
@@ -55,7 +57,7 @@ public class InteractionConsumer
 
             adjustPostLikeCount(postId, action);
 
-            publishToggleLikeEvent(postId, action);
+            publishToggleLikeEvent(postId,explorerId, action);
 
         } catch (JsonProcessingException e) {
             log.error("Failed to parse ToggleLikePost JSON", e);
@@ -70,9 +72,9 @@ public class InteractionConsumer
         }
     }
 
-    private void publishToggleLikeEvent(UUID postId, ToggleLikeAction action) {
+    private void publishToggleLikeEvent(UUID postId, UUID explorerId, ToggleLikeAction action) {
         publisher.publishEvent(
-                new InteractionEventToggleLike(postId, postId, action )
+                new InteractionEventToggleLike(postId, explorerId , action )
         );
     }
 
@@ -83,14 +85,13 @@ public class InteractionConsumer
 
         try {
             ToggleUpvotePost payload = objectMapper.readValue(json, ToggleUpvotePost.class);
-            UUID promoterId = payload.getPromoterId();
+            UUID promoter = payload.getPromoterId();
             UUID postId = payload.getPostId();
 
-            ToggleUpvoteState action = postUpvoteRepo.toggleUpvote(promoterId, postId);
+            ToggleUpvoteState action = postUpvoteRepo.toggleUpvote(promoter, postId);
 
-            adjustPostUpvoteCount(postId, action);
-
-            publishToggleUpvoteEvent(postId, action);
+            InteractionEventToggleUpvote interactionEventToggleUpvote = adjustPostUpvoteCount(postId, promoter, action);
+            publisher.publishEvent(interactionEventToggleUpvote);
 
         } catch (JsonProcessingException e) {
             log.error("Failed to parse ToggleUpvoteState JSON", e);
@@ -98,19 +99,28 @@ public class InteractionConsumer
         }
     }
 
-    private void adjustPostUpvoteCount(UUID postId, ToggleUpvoteState action) {
+    private InteractionEventToggleUpvote adjustPostUpvoteCount(UUID postId, UUID promoter ,ToggleUpvoteState action) {
         switch (action) {
-            case INSERT,  UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotesAndBoost(postId);
+            case INSERT-> {
+                OffsetDateTime boostedAt = OffsetDateTime.now();
+
+                postInteractionsRepo.incrementUpvotesAndBoost(postId,boostedAt);
+
+                Optional<PostInteraction> postInteractionOptional = postInteractionsRepo.findById(postId);
+                if(postInteractionOptional.isEmpty())
+                    throw new RuntimeException("post does not have interaction informations");
+
+                PostInteraction postInteraction = postInteractionOptional.get();
+
+                return new InteractionEventToggleUpvote(
+                        postId, promoter ,postInteraction.getTotalLikes(), postInteraction.getTotalUpvotes(),postInteraction.getTotalClicks(),postInteraction.getTotalWatchSeconds(), boostedAt.toEpochSecond()
+                );
+            }
+            case UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotes(postId);
             case UPDATE_REMOVED_UPVOTE -> postInteractionsRepo.decrementUpvotes(postId);
         }
+        return new InteractionEventToggleUpvote(postId,promoter,action);
     }
-
-    private void publishToggleUpvoteEvent(UUID postId, ToggleUpvoteState action) {
-        publisher.publishEvent(
-                new InteractionEventToggleUpvote(postId, postId, action)
-        );
-    }
-
 
 
     @JmsListener(destination = TOPIC_WATCH_NAME)

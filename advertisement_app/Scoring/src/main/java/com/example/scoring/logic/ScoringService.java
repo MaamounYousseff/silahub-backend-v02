@@ -4,9 +4,7 @@ import com.example.scoring.domain.model.PostInteractionStats;
 import com.example.scoring.domain.model.PostScoreBucket;
 import com.example.scoring.domain.repo.BucketRepository;
 import com.example.scoring.domain.repo.PostInteractionStatsRepository;
-import com.example.shared.domain.event.interaction.InteractionEventPostClicked;
-import com.example.shared.domain.event.interaction.InteractionEventPostWatched;
-import com.example.shared.domain.event.interaction.InteractionEventToggleLike;
+import com.example.shared.domain.event.interaction.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,9 +114,40 @@ public class ScoringService
     }
 
 
-    public void processUpvote(InteractionEventPostWatched event){
-//        TODO PUBLISH boost_post command
-
-//        TODO listen to post_boosted event and update the post information in the repo
+    public void processUpvote(InteractionEventToggleUpvote event){
+        switch (event.getToggleUpvoteState())
+        {
+            case INSERT -> {
+                PostInteractionStats postInteractionStats  = fromInteractionEventToggleUpvote(event);
+                PostScoreBucket postScoreBucket =
+                        new PostScoreBucket(
+                                postInteractionStats.getPostId(),postInteractionStats.getTempTotalLike(),postInteractionStats.getTempTotalUpvote(),postInteractionStats.getTempTotalClick(), postInteractionStats.getTempTotalWatchTime(),event.getBoostedAt()
+                        );
+                this.bucketRepository.addPostScore(postScoreBucket);
+                this.postInteractionStatsRepository.save(postInteractionStats);
+            }
+//            if not exist in those case ignore
+            case UPDATE_ADDED_UPVOTE -> this.postInteractionStatsRepository.incrementTempTotalUpvote(event.getPostId());
+            case UPDATE_REMOVED_UPVOTE -> this.postInteractionStatsRepository.decrementTempTotalUpvote(event.getPostId());
+        }
     }
+
+    private   PostInteractionStats fromInteractionEventToggleUpvote(InteractionEventToggleUpvote event) {
+        PostInteractionStats stats = PostInteractionStats.builder()
+                .postId(event.getPostId())
+                .boostedAt(event.getBoostedAt())
+                .build();
+
+        // Only set totals if the event is an INSERT
+        if (event.getToggleUpvoteState() == ToggleUpvoteState.INSERT) {
+            stats.setTempTotalLike(event.getTotalLike());
+            stats.setTempTotalUpvote(event.getTotalUpvote());
+            stats.setTempTotalClick(event.getTotalClick());
+            stats.setTempTotalWatchTime(event.getTotalWatchTime());
+        }
+
+        // scoreUpdateCount starts at 1 by default; you can increment later if needed
+        return stats;
+    }
+
 }

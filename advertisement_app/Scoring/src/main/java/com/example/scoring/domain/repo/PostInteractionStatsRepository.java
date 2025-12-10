@@ -55,6 +55,27 @@ public class PostInteractionStatsRepository {
     }
 
 
+    public void incrementTempTotalUpvote(UUID postId) {
+        Query query = new Query(Criteria.where("_id").is(postId));
+        Update update = new Update().inc("tempTotalUpvote", 1);
+        mongoTemplate.updateFirst(query, update, PostInteractionStats.class);
+    }
+
+    public void decrementTempTotalUpvote(UUID postId) {
+        Query query = new Query(Criteria.where("_id").is(postId));
+        Update update = new Update().inc("tempTotalUpvote", -1);
+        mongoTemplate.updateFirst(query, update, PostInteractionStats.class);
+    }
+    public void incrementUpvoteAndUpdateBoostTime(UUID postId, Long newBoostedAt) {
+        Query query = new Query(Criteria.where("_id").is(postId));
+        Update update = new Update()
+                .inc("tempTotalUpvote", 1)   // increment upvote
+                .set("boostedAt", newBoostedAt); // update boostedAt timestamp
+
+        mongoTemplate.updateFirst(query, update, PostInteractionStats.class);
+    }
+
+
 
     /**
      * Get the PostInteractionStats for a given postId

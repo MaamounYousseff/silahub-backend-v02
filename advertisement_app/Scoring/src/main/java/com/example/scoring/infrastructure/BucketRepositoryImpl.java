@@ -1,4 +1,4 @@
-package com.example.scoring.infrastructure.repo;
+package com.example.scoring.infrastructure;
 
 import com.example.scoring.domain.model.PostScoreBucket;
 import com.example.scoring.domain.repo.BucketRepository;

@@ -37,6 +37,6 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
     @EventListener
     public void onFeedPostUpvoted(InteractionEventToggleUpvote eventUpvote) {
         System.out.println("Score receive upvote");
-//        scoringService.processUpvote(eventUpvote);
+        scoringService.processUpvote(eventUpvote);
     }
 }
