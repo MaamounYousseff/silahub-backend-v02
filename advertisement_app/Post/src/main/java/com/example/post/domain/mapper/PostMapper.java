@@ -26,7 +26,6 @@ public class PostMapper
         OffsetDateTime now = OffsetDateTime.now();
         post.setCreatedAt(now);
         post.setUpdatedAt(now);
-        post.setBoostedAt(now);
 
         return post;
     }

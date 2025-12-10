@@ -30,11 +30,13 @@ public interface PostInteractionRepo extends JpaRepository<PostInteraction, UUID
 
     @Modifying
     @Query("""
-        UPDATE PostInteraction p
-        SET p.totalUpvotes = p.totalUpvotes + 1
-        WHERE p.postId = :postId
-    """)
-    void incrementUpvotes(UUID postId);
+    UPDATE PostInteraction p
+    SET p.totalUpvotes = p.totalUpvotes + 1,
+        p.boostedAt = CURRENT_TIMESTAMP
+    WHERE p.postId = :postId
+""")
+    void incrementUpvotesAndBoost(UUID postId);
+
 
 
     @Modifying

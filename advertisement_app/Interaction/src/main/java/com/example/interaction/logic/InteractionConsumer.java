@@ -100,7 +100,7 @@ public class InteractionConsumer
 
     private void adjustPostUpvoteCount(UUID postId, ToggleUpvoteState action) {
         switch (action) {
-            case INSERT,  UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotes(postId);
+            case INSERT,  UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotesAndBoost(postId);
             case UPDATE_REMOVED_UPVOTE -> postInteractionsRepo.decrementUpvotes(postId);
         }
     }

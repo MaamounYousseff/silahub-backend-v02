@@ -1,4 +1,4 @@
-package com.example.scoring.domain.event;
+package com.example.scoring.infrastructure.event;
 
 import com.example.shared.domain.event.post.PostEventListener;
 import com.example.shared.domain.event.post.PostEventPostCreated;

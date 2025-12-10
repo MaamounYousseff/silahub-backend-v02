@@ -1,6 +1,8 @@
-package com.example.scoring.domain.event;
+package com.example.scoring.infrastructure.event;
 
+import com.example.scoring.logic.ScoringService;
 import com.example.shared.domain.event.interaction.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +10,21 @@ import org.springframework.stereotype.Component;
 public class InteractionScoreEventListenerImpl implements InteractionEventListener
 {
 
+
+    @Autowired
+    private ScoringService scoringService;
+
     @Override
     @EventListener
     public void onFeedPostClicked(InteractionEventPostClicked eventClick) {
         System.out.println("Score receive click");
+    }
+
+    @Override
+    @EventListener
+    public void onFeedPostWatched(InteractionEventPostWatched eventWatchTime) {
+        System.out.println("Score receive watch");
+        scoringService.processWatchTime(eventWatchTime);
     }
 
     @Override
@@ -26,11 +39,7 @@ public class InteractionScoreEventListenerImpl implements InteractionEventListen
         System.out.println("Score receive upvote");
     }
 
-    @Override
-    @EventListener
-    public void onFeedPostWatched(InteractionEventPostWatched eventWatchTime) {
-        System.out.println("Score receive watch");
-    }
+
 
 
 }

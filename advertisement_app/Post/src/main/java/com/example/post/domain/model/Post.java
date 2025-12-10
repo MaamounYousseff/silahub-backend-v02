@@ -32,9 +32,6 @@ public class Post {
     @Column(name = "image_urls", nullable = false, columnDefinition = "TEXT[]")
     private List<String> imageUrls;
 
-    @Column(name = "boosted_at", columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime boostedAt;
-
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMPTZ")
     private OffsetDateTime createdAt;
 

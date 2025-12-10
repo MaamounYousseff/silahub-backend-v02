@@ -1,7 +1,10 @@
 package com.example.interaction.domain.model;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -31,5 +34,14 @@ public class PostInteraction {
 
     @Column(name = "total_clicks", nullable = false)
     private Long totalClicks = 0L;
+
+    @Column(name = "boosted_at", nullable = false)
+    private OffsetDateTime boostedAt ;
+
+
+    @PostConstruct
+    private void init(){
+        this.boostedAt= OffsetDateTime.now();
+    }
 }
 

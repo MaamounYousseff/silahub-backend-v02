@@ -13,6 +13,7 @@ public class InteractionEventPostWatched {
     // Manual constructor that sets timestamp automatically
     public InteractionEventPostWatched(UUID postId, Long watchTime) {
         this.postId = postId;
+        this.watchTime = watchTime;
         this.timeStamp = OffsetDateTime.now();
     }
 }

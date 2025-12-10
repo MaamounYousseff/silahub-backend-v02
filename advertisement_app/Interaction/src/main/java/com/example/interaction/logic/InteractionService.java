@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 import static com.example.interaction.domain.Constant.*;
@@ -34,7 +33,6 @@ public class InteractionService
     private ObjectMapper objectMapper;
 
 
-
     public void feedPostClicked(UUID feedPostId) throws JsonProcessingException {
         ClickPost clickPost = new ClickPost(feedPostId);
         this.jmsTemplate.convertAndSend(  TOPIC_CLICK_NAME , objectMapper.writeValueAsString(clickPost) );
@@ -50,12 +48,11 @@ public class InteractionService
     public void feedPostLikeToggle(UUID feedPostId) throws JsonProcessingException {
        ToggleLikePost toggleLikePost = new ToggleLikePost(feedPostId,currentUserContext.getUserId());
        jmsTemplate.convertAndSend( TOPIC_LIKE_NAME , objectMapper.writeValueAsString(toggleLikePost) );
-  }
+    }
 
     public void feedPostUpvoteToggle(UUID feedPostId) throws JsonProcessingException {
         ToggleUpvotePost toggleLikePost = new ToggleUpvotePost(feedPostId,currentUserContext.getUserId());
         jmsTemplate.convertAndSend( TOPIC_UPVOTE_NAME , objectMapper.writeValueAsString(toggleLikePost) );
     }
-
 
 }
