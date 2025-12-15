@@ -15,11 +15,11 @@ public class FeedCreatorPortImpl implements FeedCreatorPort {
 
     @Override
     public FeedCreatorDto getCreatorProfile(UUID userId) {
-        Optional<User> userOptional = this.userRepository.getUserProfile(userId);
+        Optional<FeedCreatorDto> userOptional = this.userRepository.getCreatorProfile(userId);
         if(userOptional.isEmpty())
             return null;
 
-        User user = userOptional.get();
-        return Mapper.fromUser(user);
+        FeedCreatorDto creatorDto = userOptional.get();
+        return creatorDto;
     }
 }

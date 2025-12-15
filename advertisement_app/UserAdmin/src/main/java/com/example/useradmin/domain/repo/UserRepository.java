@@ -1,5 +1,6 @@
 package com.example.useradmin.domain.repo;
 
+import com.example.useradmin.api.FeedCreatorDto;
 import com.example.useradmin.domain.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,9 +95,16 @@ public class UserRepository
 
 
 
-    public Optional<User> getUserProfile(UUID userId)
-    {
-        return Optional.ofNullable(this.entityManager.find(User.class, userId));
+    public Optional<FeedCreatorDto> getCreatorProfile(UUID userId) {
+        String jpql = "SELECT new com.example.useradmin.api.FeedCreatorDto(" +
+                "u.id,  CONCAT(u.firstName, ' ', u.lastName), u.logoUrl, u.username, u.longitude, u.latitude, u.whatsappNumber) " +
+                "FROM User u WHERE u.id = :userId";
+
+        FeedCreatorDto dto = entityManager.createQuery(jpql, FeedCreatorDto.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+
+        return Optional.ofNullable(dto);
     }
 
 
