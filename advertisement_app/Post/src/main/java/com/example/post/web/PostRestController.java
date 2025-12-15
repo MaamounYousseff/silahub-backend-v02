@@ -25,13 +25,4 @@ public class PostRestController
     }
 
 
-
-//    just for test
-    @GetMapping("/test")
-    public void asd()
-    {
-        UUID postId = UUID.fromString("e6efcf6e-9c81-4002-a90e-4b4d7b52b388");
-
-        this.postService.postCreated(postId);
-    }
 }
