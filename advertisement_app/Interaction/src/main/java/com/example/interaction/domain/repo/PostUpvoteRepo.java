@@ -1,7 +1,7 @@
 package com.example.interaction.domain.repo;
 
 import com.example.interaction.domain.model.PostUpvote;
-import com.example.shared.domain.event.interaction.ToggleUpvoteState;
+import com.example.shared.interaction.ToggleUpvoteState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

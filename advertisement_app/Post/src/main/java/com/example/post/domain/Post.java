@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.hibernate.annotations.Type;
 
@@ -55,5 +56,14 @@ public class Post {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+
+
+    public static boolean postExist(Optional<Post> postOptional)
+    {
+        if(postOptional.isEmpty())
+            return false;
+        return true;
+    }
 }
 

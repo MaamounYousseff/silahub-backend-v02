@@ -1,7 +1,7 @@
 package com.example.scoring.infrastructure.event;
 
 import com.example.scoring.logic.ScoringService;
-import com.example.shared.domain.event.interaction.*;
+import com.example.shared.interaction.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

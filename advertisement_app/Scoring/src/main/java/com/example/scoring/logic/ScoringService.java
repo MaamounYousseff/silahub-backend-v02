@@ -4,7 +4,7 @@ import com.example.scoring.domain.model.PostInteractionStats;
 import com.example.scoring.domain.model.PostScoreBucket;
 import com.example.scoring.domain.repo.BucketRepository;
 import com.example.scoring.domain.repo.PostInteractionStatsRepository;
-import com.example.shared.domain.event.interaction.*;
+import com.example.shared.interaction.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

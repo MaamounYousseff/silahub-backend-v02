@@ -1,14 +1,11 @@
 package com.example.feed.infrastructure.event;
 
-import com.example.shared.domain.event.interaction.InteractionEventPostClicked;
-import com.example.shared.domain.event.interaction.InteractionEventToggleLike;
-import com.example.shared.domain.event.interaction.InteractionEventToggleUpvote;
-import com.example.shared.domain.event.interaction.InteractionEventPostWatched;
+import com.example.shared.interaction.*;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InteractionFeedEventListenerImpl implements com.example.shared.domain.event.interaction.InteractionEventListener
+public class InteractionFeedEventListenerImpl implements InteractionEventListener
 {
 
     @Override

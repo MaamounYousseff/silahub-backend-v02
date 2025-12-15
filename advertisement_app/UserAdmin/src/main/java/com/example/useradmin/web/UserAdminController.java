@@ -1,8 +1,7 @@
 package com.example.useradmin.web;
 
 import com.example.useradmin.domain.model.User;
-import com.example.useradmin.logic.dto.UserDto;
-import com.example.useradmin.logic.service.UserAdminService;
+import com.example.useradmin.logic.UserAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

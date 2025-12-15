@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -23,10 +26,10 @@ public class FeedPost
     private String creatorLogoUrl;
     private String creatorName;
     private String thumbnailUrl;
-    private String ImageUrls;
+    private List<String> ImageUrls;
     private String whatsapNumber;
-    private float lontitude;
-    private float latitude;
+    private Double lontitude;
+    private Double latitude;
 
     @Builder.Default
     private Long tempTotalLike = 0L;
@@ -42,6 +45,12 @@ public class FeedPost
 
     @Builder.Default
     private Long scoreUpdateCount = 0L;
+
+    @Builder.Default
+    private List<UUID> likeBy = new ArrayList<>();
+
+    @Builder.Default
+    private List<UUID> upvotedBy = new ArrayList<>();
 
     private Long boostedAt;
 }

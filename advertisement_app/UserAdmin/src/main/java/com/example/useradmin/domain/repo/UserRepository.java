@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -88,6 +89,13 @@ public class UserRepository
                 .executeUpdate();
 
         return updated==0 ? null : user;
+    }
+
+
+
+    public Optional<User> getUserProfile(UUID userId)
+    {
+        return Optional.ofNullable(this.entityManager.find(User.class, userId));
     }
 
 

@@ -1,7 +1,7 @@
 package com.example.interaction.domain.repo;
 
 import com.example.interaction.domain.model.PostLike;
-import com.example.shared.domain.event.interaction.ToggleLikeAction;
+import com.example.shared.interaction.ToggleLikeAction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
