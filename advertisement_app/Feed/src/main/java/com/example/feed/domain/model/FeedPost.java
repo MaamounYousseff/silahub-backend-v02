@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -53,4 +54,12 @@ public class FeedPost
     private List<UUID> upvotedBy = new ArrayList<>();
 
     private Long boostedAt;
+
+
+    public static boolean exist(Optional<FeedPost> feedPostOptional)
+    {
+        if(feedPostOptional.isEmpty())
+            return false;
+        return true;
+    }
 }

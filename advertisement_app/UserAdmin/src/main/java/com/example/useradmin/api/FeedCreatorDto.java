@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -19,4 +21,12 @@ public class FeedCreatorDto
     private Double longitude;
     private Double latitude;
     private String whatsappNumber;
+
+
+    public static boolean exist(Optional<FeedCreatorDto> feedCreatorDto)
+    {
+        if(feedCreatorDto.isEmpty())
+            return false;
+        return true;
+    }
 }

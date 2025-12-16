@@ -1,5 +1,6 @@
 package com.example.useradmin.api;
 
+import com.example.shared.useradmin.CreatorNotFoundException;
 import com.example.useradmin.domain.model.User;
 import com.example.useradmin.domain.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,11 @@ public class FeedCreatorPortImpl implements FeedCreatorPort {
 
     @Override
     public FeedCreatorDto getCreatorProfile(UUID userId) {
-        Optional<FeedCreatorDto> userOptional = this.userRepository.getCreatorProfile(userId);
-        if(userOptional.isEmpty())
-            return null;
+        Optional<FeedCreatorDto> creatorDtoOptional = this.userRepository.getCreatorProfile(userId);
+        if(!FeedCreatorDto.exist(creatorDtoOptional))
+            throw new CreatorNotFoundException();
 
-        FeedCreatorDto creatorDto = userOptional.get();
+        FeedCreatorDto creatorDto = creatorDtoOptional.get();
         return creatorDto;
     }
 }

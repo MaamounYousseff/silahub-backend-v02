@@ -1,6 +1,6 @@
 package com.example.feed.infrastructure.repo;
 
-import com.example.feed.domain.repo.UserFeedPostHistory;
+import com.example.feed.domain.repo.UserFeedPostHistoryRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 //NOT TESTED
-@Repository public class UserFeedPostHistoryImpl implements UserFeedPostHistory
+@Repository public class UserFeedPostHistoryRepoImpl implements UserFeedPostHistoryRepo
 {
 
     @Autowired

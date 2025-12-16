@@ -37,7 +37,6 @@ public class InteractionConsumer
     private PostLikeRepo postLikeRepo;
     @Autowired
     private PostUpvoteRepo postUpvoteRepo;
-
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired

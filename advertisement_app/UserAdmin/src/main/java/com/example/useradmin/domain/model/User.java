@@ -1,10 +1,12 @@
 package com.example.useradmin.domain.model;
 
 
+import com.example.useradmin.api.FeedCreatorDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -56,4 +58,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     Set<UserRoles> userRolesSet;
+
+
+    public static boolean exist(Optional<User> userOpt)
+    {
+        if (userOpt.isEmpty())
+            return false;
+        return true;
+    }
 }

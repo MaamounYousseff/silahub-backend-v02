@@ -3,6 +3,7 @@ package com.example.useradmin.domain.repo;
 import com.example.useradmin.api.FeedCreatorDto;
 import com.example.useradmin.domain.model.User;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,11 +101,15 @@ public class UserRepository
                 "u.id,  CONCAT(u.firstName, ' ', u.lastName), u.logoUrl, u.username, u.longitude, u.latitude, u.whatsappNumber) " +
                 "FROM User u WHERE u.id = :userId";
 
-        FeedCreatorDto dto = entityManager.createQuery(jpql, FeedCreatorDto.class)
-                .setParameter("userId", userId)
-                .getSingleResult();
-
-        return Optional.ofNullable(dto);
+        try {
+            return Optional.of(
+                    entityManager.createQuery(jpql, FeedCreatorDto.class)
+                            .setParameter("userId", userId)
+                            .getSingleResult()
+            );
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
 

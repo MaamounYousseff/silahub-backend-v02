@@ -3,7 +3,7 @@ package com.example.feed.domain.repo;
 import java.util.List;
 import java.util.UUID;
 
-public interface UserFeedPostHistory
+public interface UserFeedPostHistoryRepo
 {
     void saveHistory(UUID explorerId, List<UUID> postIds);
     List<UUID> getHistory(UUID explorerId);
