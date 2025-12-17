@@ -1,5 +1,6 @@
 package com.example.feed.web;
 
+import com.example.feed.domain.exception.FeedPostLimitExceededException;
 import com.example.feed.domain.model.FeedPost;
 import com.example.feed.logic.FeedService;
 import com.example.shared.SilahubResponse;
@@ -18,7 +19,7 @@ import java.util.Map;
 ///api/v0/feed
 @RestController
 @RequestMapping("/api/v0/feed")
-public class FeedController
+public class FeedRestController
 {
     @Autowired
     private FeedService feedService;
@@ -28,6 +29,13 @@ public class FeedController
     {
         List<FeedPost> feed= this.feedService.getFeed(offset);
         return ResponseEntity.ok(SilahubResponseUtil.success(feed,"Fetch Feed Successfully",Map.of()));
+    }
+
+
+    @GetMapping("/hi")
+    public void dsadsa()
+    {
+        throw new FeedPostLimitExceededException();
     }
 
 
