@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Component
 @RequestScope
-public class CurrentUserContextImpl implements CurrentUserContext {
+public class UserContextImpl implements CurrentUserContext , UserContext{
 
     private static final ThreadLocal<UUID> userIdHolder = new ThreadLocal<>();
 
