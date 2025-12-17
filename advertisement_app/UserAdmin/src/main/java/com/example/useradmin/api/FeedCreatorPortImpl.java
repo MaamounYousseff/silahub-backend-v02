@@ -1,7 +1,6 @@
 package com.example.useradmin.api;
 
 import com.example.shared.useradmin.CreatorNotFoundException;
-import com.example.useradmin.domain.model.User;
 import com.example.useradmin.domain.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

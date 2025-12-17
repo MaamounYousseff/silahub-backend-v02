@@ -1,7 +1,6 @@
 package com.example.useradmin.domain.model;
 
 
-import com.example.useradmin.api.FeedCreatorDto;
 import jakarta.persistence.*;
 import lombok.*;
 

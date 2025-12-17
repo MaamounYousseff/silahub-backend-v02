@@ -4,7 +4,6 @@ import com.example.interaction.logic.InteractionService;
 import com.example.shared.SilahubResponse;
 import com.example.shared.SilahubResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
