@@ -30,10 +30,10 @@ public class PostService
     @Autowired
     private PostInteractionPort postInteractionPort;
 
-    public void createPost(PostCreateRequest postRequest)
+    public Post createPost(PostCreateRequest postRequest)
     {
         Post post = PostMapper.fromPostCreateRequest(postRequest,currentUserContext.getUserId());
-        postRepository.save(post);
+        return postRepository.save(post);
     }
 
     @Transactional
