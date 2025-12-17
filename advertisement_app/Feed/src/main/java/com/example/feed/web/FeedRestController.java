@@ -32,11 +32,4 @@ public class FeedRestController
     }
 
 
-    @GetMapping("/hi")
-    public void dsadsa()
-    {
-        throw new FeedPostLimitExceededException();
-    }
-
-
 }
