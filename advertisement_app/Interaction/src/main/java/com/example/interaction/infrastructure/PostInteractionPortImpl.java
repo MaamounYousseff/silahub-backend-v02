@@ -1,7 +1,9 @@
-package com.example.interaction.api;
+package com.example.interaction.infrastructure;
 
 import com.example.interaction.domain.model.PostInteraction;
 import com.example.interaction.domain.repo.PostInteractionRepo;
+import com.example.post.api.PostInteractionCreatedDto;
+import com.example.post.api.PostInteractionPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class PostInteractionPortImpl implements  PostInteractionPort{
+public class PostInteractionPortImpl implements PostInteractionPort {
 
     @Autowired
     private PostInteractionRepo postInteractionRepo;

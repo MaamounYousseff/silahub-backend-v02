@@ -1,10 +1,11 @@
 package com.example.feed.logic;
 
+import com.example.feed.api.TopFeedPostDto;
+import com.example.feed.api.TopFeedPostPort;
+import com.example.feed.domain.exception.FeedPostLimitExceededException;
 import com.example.feed.domain.model.FeedPost;
 import com.example.feed.domain.repo.FeedRepo;
 import com.example.feed.domain.repo.UserFeedPostHistoryRepo;
-import com.example.scoring.domain.model.PostScoreBucket;
-import com.example.scoring.domain.repo.BucketRepository;
 import com.example.shared.security.CurrentUserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class FeedService
     @Autowired
     private UserFeedPostHistoryRepo userFeedPostHistoryRepo;
     @Autowired
-    private BucketRepository bucketRepository;
+    private TopFeedPostPort topFeedPostPort;
     @Autowired
     private FeedRepo feedRepo;
 
@@ -35,7 +36,7 @@ public class FeedService
         List<UUID> postsSeenByUserList = userFeedPostHistoryRepo.getHistory(expolrerId);
 
 //        tight coupling with scoring context
-        List<PostScoreBucket> unseenPosts = new ArrayList<>();
+        List<UUID> unseenPosts = new ArrayList<>();
 
         getNTopPosts(postsSeenByUserList, unseenPosts , offset);
 
@@ -46,7 +47,7 @@ public class FeedService
         List<FeedPost> feedPosts     = new ArrayList<>();
         for(int i =0 ; i < unseenPosts.size(); i++)
         {
-            Optional<FeedPost> feedPostOptional = this.feedRepo.findByPostId(unseenPosts.get(i).getPostId());
+            Optional<FeedPost> feedPostOptional = this.feedRepo.findByPostId(unseenPosts.get(i));
             if(!FeedPost.exist(feedPostOptional))
                 continue;
 
@@ -54,9 +55,7 @@ public class FeedService
         }
 
         // Update user post history with new post IDs
-        List<UUID> newPostIds = new ArrayList<>(unseenPosts.stream()
-                .map(PostScoreBucket::getPostId)
-                .toList());
+        List<UUID> newPostIds = unseenPosts;
 
         List<UUID> newSeenPosts = new ArrayList<>(newPostIds);
         newSeenPosts.addAll(postsSeenByUserList);
@@ -67,7 +66,7 @@ public class FeedService
     }
 
 
-    private void getNTopPosts( List<UUID> postsSeenByUserList, List<PostScoreBucket> unseenPosts,  int offset  )
+    private void getNTopPosts( List<UUID> postsSeenByUserList, List<UUID> unseenPosts,  int offset  )
     {
 //        INFO : Basecase unseen posts should get the same or bigger size then TopPost List
 
@@ -75,13 +74,19 @@ public class FeedService
             return;
 
 //        tightly with scoring
-        List<PostScoreBucket> topPosts = bucketRepository.fetchTopPosts(offset);
+        Optional<TopFeedPostDto> topPostsOpt = topFeedPostPort.getNTopPosts(offset);
+        if(topPostsOpt.isEmpty() && unseenPosts.size() == 0)
+            throw new FeedPostLimitExceededException();
+
+        TopFeedPostDto topPosts = topPostsOpt.get();
+
+
         if(unseenPosts.size() > 0)
-            unseenPosts.addAll(topPosts);
+            unseenPosts.addAll(topPosts.getTopPosts());
 
         // Filter posts the user hasn't seen
-        List<PostScoreBucket> filteredPosts = topPosts.stream()
-                .filter(post -> !isPostSeenBefore(post.getPostId(), postsSeenByUserList))
+        List<UUID> filteredPosts = topPosts.getTopPosts().stream()
+                .filter(postId -> !isPostSeenBefore(postId, postsSeenByUserList))
                 .toList();
 
         unseenPosts.addAll(filteredPosts);

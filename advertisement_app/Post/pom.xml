@@ -24,11 +24,7 @@
         </dependency>
 
 <!--        it should be just for api package -->
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>Interaction</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
+
 
         <dependency>
             <groupId>org.springframework</groupId>

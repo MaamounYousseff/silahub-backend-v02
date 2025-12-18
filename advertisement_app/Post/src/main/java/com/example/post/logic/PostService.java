@@ -1,8 +1,8 @@
 package com.example.post.logic;
 
 
-import com.example.interaction.api.PostInteractionCreatedDto;
-import com.example.interaction.api.PostInteractionPort;
+import com.example.post.api.PostInteractionCreatedDto;
+import com.example.post.api.PostInteractionPort;
 import com.example.post.web.PostMapper;
 import com.example.post.domain.Post;
 import com.example.post.domain.PostRepository;

@@ -1,4 +1,4 @@
-package com.example.interaction.api;
+package com.example.post.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

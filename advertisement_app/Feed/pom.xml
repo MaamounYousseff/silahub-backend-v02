@@ -27,11 +27,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>Scoring</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,4 +1,4 @@
-package com.example.interaction.api;
+package com.example.post.api;
 
 import java.util.UUID;
 
