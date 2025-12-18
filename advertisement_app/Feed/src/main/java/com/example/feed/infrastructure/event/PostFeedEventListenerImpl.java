@@ -1,16 +1,20 @@
 package com.example.feed.infrastructure.event;
 
+import com.example.feed.api.FeedCreatorDto;
+import com.example.feed.api.FeedCreatorPort;
 import com.example.feed.domain.model.FeedPost;
 import com.example.feed.domain.repo.FeedRepo;
 import com.example.shared.post.PostEventListener;
 import com.example.shared.post.EventPostCreated;
-import com.example.useradmin.api.FeedCreatorDto;
-import com.example.useradmin.api.FeedCreatorPort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
+@Slf4j
 public class PostFeedEventListenerImpl implements PostEventListener
 {
 
@@ -28,7 +32,13 @@ public class PostFeedEventListenerImpl implements PostEventListener
 
         FeedPost feedPost = fromEventPostCreated(eventPostCreated);
 
-        FeedCreatorDto feedCreatorDto = feedCreatorPort.getCreatorProfile(eventPostCreated.getCreatorId());
+        Optional<FeedCreatorDto> feedCreatorDtoOptional = feedCreatorPort.getCreatorProfile(eventPostCreated.getCreatorId());
+        if(feedCreatorDtoOptional.isEmpty())
+        {
+            log.error("feed creator unavailable : "+eventPostCreated.getCreatorId());
+            return;
+        }
+        FeedCreatorDto feedCreatorDto =  feedCreatorDtoOptional.get();
 
         feedPost.setCreatorLogoUrl(feedCreatorDto.getCreatorLogoUrl());
         feedPost.setCreatorName(feedCreatorDto.getCreatorName());

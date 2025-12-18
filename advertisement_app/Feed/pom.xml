@@ -26,11 +26,6 @@
             <artifactId>Shared</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>UserAdmin</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.example</groupId>

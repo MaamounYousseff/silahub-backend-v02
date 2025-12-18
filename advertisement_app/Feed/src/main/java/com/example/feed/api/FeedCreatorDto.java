@@ -1,4 +1,5 @@
-package com.example.useradmin.api;
+package com.example.feed.api;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,4 +30,6 @@ public class FeedCreatorDto
             return false;
         return true;
     }
+
+
 }

@@ -9,6 +9,7 @@ import com.example.post.domain.PostRepository;
 import com.example.post.web.PostCreateRequest;
 import com.example.shared.post.EventPostCreated;
 import com.example.shared.security.CurrentUserContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class PostService
 {
     @Autowired
@@ -42,7 +44,10 @@ public class PostService
         Optional<Post> postOptional = this.postRepository.findById(postId);
 
         if(!Post.postExist(postOptional))
+        {
+            log.error("Post not exist");
             return;
+        }
 
         Post post = postOptional.get();
 
