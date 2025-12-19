@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class FeedService
@@ -31,7 +32,7 @@ public class FeedService
     public static final int FEED_PAGING_SIZE = 3;
 
 
-    public List<FeedPost> getFeed(int offset) {
+    public List<FeedPost> getFeed(AtomicInteger atomicOffset) {
         UUID expolrerId = userContext.getUserId();
 
         List<UUID> postsSeenByUserList = userFeedPostHistoryRepo.getHistory(expolrerId);
@@ -39,7 +40,7 @@ public class FeedService
 //        tight coupling with scoring context
         List<UUID> unseenPosts = new ArrayList<>();
 
-        getNTopPosts(postsSeenByUserList, unseenPosts , offset);
+        getNTopPosts(postsSeenByUserList, unseenPosts , atomicOffset);
 
         // Keep only the last 3 posts
         unseenPosts = unseenPosts.subList(Math.max(unseenPosts.size() - FEED_PAGING_SIZE, 0), unseenPosts.size());
@@ -67,23 +68,20 @@ public class FeedService
     }
 
 
-    private void getNTopPosts( List<UUID> postsSeenByUserList, List<UUID> unseenPosts,  int offset  )
+    private void  getNTopPosts( List<UUID> postsSeenByUserList, List<UUID> unseenPosts,  AtomicInteger atomicOffset  )
     {
 //        INFO : Basecase unseen posts should get the same or bigger size then TopPost List
 
         if(unseenPosts.size() >= FEED_PAGING_SIZE)
-            return;
+            return ;
 
 //        tightly with scoring
-        Optional<TopFeedPostDto> topPostsOpt = topFeedPostPort.getNTopPosts(offset);
+        Optional<TopFeedPostDto> topPostsOpt = topFeedPostPort.getNTopPosts(atomicOffset.get());
         if(topPostsOpt.isEmpty() && unseenPosts.size() == 0)
             throw new FeedPostLimitExceededException();
 
         TopFeedPostDto topPosts = topPostsOpt.get();
 
-
-        if(unseenPosts.size() > 0)
-            unseenPosts.addAll(topPosts.getTopPosts());
 
         // Filter posts the user hasn't seen
         List<UUID> filteredPosts = topPosts.getTopPosts().stream()
@@ -93,7 +91,11 @@ public class FeedService
         unseenPosts.addAll(filteredPosts);
 
         if (unseenPosts.size() < FEED_PAGING_SIZE)
-            getNTopPosts(postsSeenByUserList,unseenPosts,++offset);
+        {
+            atomicOffset.set(atomicOffset.get() + 1 );
+            getNTopPosts(postsSeenByUserList,unseenPosts,atomicOffset);
+        }
+
     }
 
 
