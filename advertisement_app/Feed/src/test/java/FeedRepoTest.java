@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.annotation.Commit;
 
 import java.util.UUID;
@@ -40,8 +38,8 @@ public class FeedRepoTest
                 .creatorName("Test Post With Real URLs")
                 .thumbnailUrl("https://picsum.photos/200/300")
                 .ImageUrls("https://picsum.photos/300/400,https://via.placeholder.com/350.png")
-                .whatsapNumber("enable")
-                .lontitude(0f)
+                .whatsappNumber("enable")
+                .longitude(0f)
                 .latitude(0f)
                 .tempTotalLike(2L)
                 .tempTotalUpvote(1L)

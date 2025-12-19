@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/post/v0")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PostRestController
 {
 

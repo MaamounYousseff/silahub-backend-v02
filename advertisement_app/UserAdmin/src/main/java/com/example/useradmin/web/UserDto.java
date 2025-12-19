@@ -20,8 +20,8 @@ public class UserDto
     private String phoneNumber;
     private String whatsappNumber;
     private Short rank;
-    private Double latitude;
-    private Double longitude;
+    private Float latitude;
+    private Float longitude;
     private Boolean accountNonLocked;
     private Boolean isEnabled;
     private Short loginAttempts = 0;

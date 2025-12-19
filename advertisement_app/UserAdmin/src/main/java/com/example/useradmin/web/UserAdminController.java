@@ -16,6 +16,8 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/v0/users")
+@CrossOrigin(origins = "http://localhost:5173")
+
 public class UserAdminController {
 
     @Autowired

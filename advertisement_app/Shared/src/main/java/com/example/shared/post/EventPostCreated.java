@@ -22,6 +22,4 @@ public class EventPostCreated
     private UUID creatorId;
     private Long timeStamp;
     private Long boostedAt;
-
-
 }

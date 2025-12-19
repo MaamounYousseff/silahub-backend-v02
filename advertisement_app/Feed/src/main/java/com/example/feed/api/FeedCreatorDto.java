@@ -19,8 +19,8 @@ public class FeedCreatorDto
     private String creatorName;
     private String creatorLogoUrl;
     private String creatorUsername;
-    private Double longitude;
-    private Double latitude;
+    private Float longitude;
+    private Float latitude;
     private String whatsappNumber;
 
 

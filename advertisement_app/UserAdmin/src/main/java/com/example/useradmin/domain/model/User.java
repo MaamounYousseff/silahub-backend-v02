@@ -32,8 +32,8 @@ public class User {
 
     private Short rank;
 
-    private Double latitude;
-    private Double longitude;
+    private Float latitude;
+    private Float longitude;
 
     private Boolean accountNonLocked;
     private Boolean isEnabled;

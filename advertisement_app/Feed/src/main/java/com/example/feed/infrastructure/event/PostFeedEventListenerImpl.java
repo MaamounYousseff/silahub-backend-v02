@@ -42,9 +42,9 @@ public class PostFeedEventListenerImpl implements PostEventListener
 
         feedPost.setCreatorLogoUrl(feedCreatorDto.getCreatorLogoUrl());
         feedPost.setCreatorName(feedCreatorDto.getCreatorName());
-        feedPost.setLontitude(feedCreatorDto.getLongitude());
+        feedPost.setLongitude(feedCreatorDto.getLongitude());
         feedPost.setLatitude(feedCreatorDto.getLatitude());
-        feedPost.setWhatsapNumber(feedCreatorDto.getWhatsappNumber());
+        feedPost.setWhatsappNumber(feedCreatorDto.getWhatsappNumber());
         this.feedRepo.save(feedPost);
         return;
     }

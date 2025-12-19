@@ -28,9 +28,9 @@ public class FeedPost
     private String creatorName;
     private String thumbnailUrl;
     private List<String> ImageUrls;
-    private String whatsapNumber;
-    private Double lontitude;
-    private Double latitude;
+    private String whatsappNumber;
+    private Float longitude;
+    private Float latitude;
 
     @Builder.Default
     private Long tempTotalLike = 0L;

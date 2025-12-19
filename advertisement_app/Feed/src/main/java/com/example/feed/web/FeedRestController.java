@@ -7,10 +7,7 @@ import com.example.shared.SilahubResponse;
 import com.example.shared.SilahubResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -20,12 +17,13 @@ import java.util.UUID;
 ///api/v0/feed
 @RestController
 @RequestMapping("/api/v0/feed")
+@CrossOrigin(origins = "http://localhost:5173")
 public class FeedRestController
 {
     @Autowired
     private FeedService feedService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<SilahubResponse> fetchFeed (@RequestParam int offset)
     {
         List<FeedPost> feed= this.feedService.getFeed(offset);
