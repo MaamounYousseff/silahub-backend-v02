@@ -3,6 +3,7 @@ package com.example.feed.logic;
 import com.example.feed.api.TopFeedPostDto;
 import com.example.feed.api.TopFeedPostPort;
 import com.example.feed.domain.exception.FeedPostLimitExceededException;
+import com.example.feed.domain.exception.FeedPostNotExistException;
 import com.example.feed.domain.model.FeedPost;
 import com.example.feed.domain.repo.FeedRepo;
 import com.example.feed.domain.repo.UserFeedPostHistoryRepo;
@@ -105,5 +106,16 @@ public class FeedService
         return postsSeen.contains(postId);
     }
 //    End Feed
+
+
+
+    public FeedPost getFeed(UUID postId)
+    {
+        Optional<FeedPost> feedPost= this.feedRepo.findByPostId(postId);
+        if(feedPost.isEmpty())
+            throw new FeedPostNotExistException();
+
+        return feedPost.get();
+    }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 ///api/v0/feed
@@ -24,12 +25,19 @@ public class FeedRestController
     @Autowired
     private FeedService feedService;
 
-    @GetMapping("/test")
+    @GetMapping("/")
     public ResponseEntity<SilahubResponse> fetchFeed (@RequestParam int offset)
     {
         List<FeedPost> feed= this.feedService.getFeed(offset);
         return ResponseEntity.ok(SilahubResponseUtil.success(feed,"Fetch Feed Successfully",Map.of()));
     }
 
+
+    @GetMapping("/feedDetails")
+    public ResponseEntity<SilahubResponse> getPostDetails (@RequestParam UUID postId)
+    {
+        FeedPost feed= this.feedService.getFeed(postId);
+        return ResponseEntity.ok(SilahubResponseUtil.success(feed,"Fetch Feed Post Details Successfully",Map.of()));
+    }
 
 }
