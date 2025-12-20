@@ -1,11 +1,12 @@
 package com.example.feed.web;
 
-import com.example.feed.domain.exception.FeedPostLimitExceededException;
 import com.example.feed.domain.model.FeedPost;
 import com.example.feed.infrastructure.CookieService;
 import com.example.feed.logic.FeedService;
 import com.example.shared.SilahubResponse;
 import com.example.shared.SilahubResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,21 +30,19 @@ public class FeedRestController
     private CookieService cookieService;
 
     @GetMapping
-    public ResponseEntity<SilahubResponse> fetchFeed ()
+    public ResponseEntity<SilahubResponse> fetchFeed (HttpServletResponse response)
     {
 //        get cookie
-        Optional<Integer> offset = cookieService.getFeedOffset();
-        if(offset.isEmpty())
-             offset = Optional.of(cookieService.createCookie());
+        int offset = cookieService.getFeedOffset().orElseGet(() -> 0);
 
         AtomicInteger atomicInteger = new AtomicInteger();
-        atomicInteger.set(offset.get());
+        atomicInteger.set(offset);
 
 //        logic
         List<FeedPost> feed= this.feedService.getFeed(atomicInteger);
 
 //        update the cookie value for the  web
-        this.cookieService.updateOffset(atomicInteger.get() + 1);
+        this.cookieService.updateOffset(atomicInteger.get() + 1, response);
 
         return ResponseEntity.ok(SilahubResponseUtil.success(feed,"Fetch Feed Successfully",Map.of()));
     }

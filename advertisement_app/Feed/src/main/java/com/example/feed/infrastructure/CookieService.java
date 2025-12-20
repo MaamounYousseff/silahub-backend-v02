@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
+import static org.springframework.boot.web.server.Cookie.SameSite.NONE;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -28,13 +28,12 @@ public class CookieService
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attrs.getRequest();
         if (request == null) {
-            return Optional.of(FEED_COOKIE_INITIAL_VALUE);
+            return Optional.empty();
         }
 
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
-            return Optional.of(FEED_COOKIE_INITIAL_VALUE);
-
+            return Optional.empty();
         }
 
         return Arrays.stream(cookies)
@@ -55,50 +54,20 @@ public class CookieService
 
 
 
-    public void updateOffset(int offset) {
-        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = attrs.getRequest();
-        HttpServletResponse response = attrs.getResponse();
+    public void updateOffset(int offset,  HttpServletResponse response) {
 
-        if (request == null || response == null) {
-            log.error("Request or Response not available");
-            return;
-        }
+        Cookie cookie = new Cookie(FEED_OFFSET_NAME, ""+offset);
+        cookie.setValue(String.valueOf(offset));  // update value
+        cookie.setPath(FEED_COOKIE_PATH);                      // ensure path is correct
+        cookie.setHttpOnly(FEED_COOKIE_HTTP_ONLY);                 // optional: security
+        cookie.setMaxAge(FEED_COOKIE_MAX_AGE);
+        cookie.setSecure(false);
 
-        Cookie[] cookies = request.getCookies();
-        boolean found = false;
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (FEED_OFFSET_NAME.equals(cookie.getName())) {
-                    cookie.setValue(String.valueOf(offset));  // update value
-                    cookie.setPath(FEED_COOKIE_PATH);                      // ensure path is correct
-                    cookie.setHttpOnly(FEED_COOKIE_HTTP_ONLY);                 // optional: security
-                    cookie.setMaxAge(FEED_COOKIE_MAX_AGE);                   // optional: lifetime
-                    response.addCookie(cookie);               // send back to client
-                    found = true;
-                    break;
-                }
-            }
-        }
-
-        if (!found) {
-            log.info("cookie does not exist");
-            // Cookie doesn't exist, create a new one
-            Cookie newCookie = new Cookie(FEED_OFFSET_NAME, String.valueOf(offset));
-            newCookie.setPath(FEED_COOKIE_PATH);
-            newCookie.setHttpOnly(true);
-            newCookie.setMaxAge(FEED_COOKIE_MAX_AGE);
-            response.addCookie(newCookie);
-        }
+        response.addCookie(cookie);
     }
 
 
 
-    public int  createCookie()
-    {
-        Cookie cookie = new Cookie(FEED_OFFSET_NAME, ""+FEED_COOKIE_INITIAL_VALUE);
-        return FEED_COOKIE_INITIAL_VALUE;
-    }
+
 
 }

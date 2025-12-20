@@ -43,7 +43,8 @@ public class FeedService
         getNTopPosts(postsSeenByUserList, unseenPosts , atomicOffset);
 
         // Keep only the last 3 posts
-        unseenPosts = unseenPosts.subList(Math.max(unseenPosts.size() - FEED_PAGING_SIZE, 0), unseenPosts.size());
+        if(unseenPosts.size() > FEED_PAGING_SIZE)
+            unseenPosts = unseenPosts.subList(Math.max(unseenPosts.size() - FEED_PAGING_SIZE, 0), unseenPosts.size());
 
         // Get FeedPost from NOSQL
         List<FeedPost> feedPosts     = new ArrayList<>();
@@ -77,7 +78,12 @@ public class FeedService
 
 //        tightly with scoring
         Optional<TopFeedPostDto> topPostsOpt = topFeedPostPort.getNTopPosts(atomicOffset.get());
-        if(topPostsOpt.isEmpty() && unseenPosts.size() == 0)
+
+        //case when we have a limit but there was one or two more post <      FEED_PAGING_SIZE
+        if(topPostsOpt.get().getTopPosts().size() == 0  && unseenPosts.size() != 0)
+            return;
+
+        if(topPostsOpt.get().getTopPosts().size() == 0 && unseenPosts.size() == 0)
             throw new FeedPostLimitExceededException();
 
         TopFeedPostDto topPosts = topPostsOpt.get();
