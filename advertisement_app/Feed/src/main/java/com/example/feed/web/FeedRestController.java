@@ -5,7 +5,6 @@ import com.example.feed.infrastructure.CookieService;
 import com.example.feed.logic.FeedService;
 import com.example.shared.SilahubResponse;
 import com.example.shared.SilahubResponseUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
