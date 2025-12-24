@@ -7,7 +7,9 @@ import com.example.feed.domain.exception.FeedPostNotExistException;
 import com.example.feed.domain.model.FeedPost;
 import com.example.feed.domain.repo.FeedRepo;
 import com.example.feed.domain.repo.UserFeedPostHistoryRepo;
+import com.example.shared.interaction.InteractionEventToggleLike;
 import com.example.shared.security.CurrentUserContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
+@Slf4j
 public class FeedService
 {
     @Autowired
@@ -124,6 +127,32 @@ public class FeedService
             throw new FeedPostNotExistException();
 
         return feedPost.get();
+    }
+
+    public void processLike(InteractionEventToggleLike event)
+    {
+        switch (event.getToggleLikeAction())
+        {
+            case INSERT, UPDATE_LIKED -> {
+                boolean isUpdated = this.feedRepo.addLike(event.getPostId(), event.getExplorerId());
+
+                if(!isUpdated)
+                {
+                    log.info("Stop process add Like in Feed");
+                    return;
+                }
+            }
+
+            case UPDATE_UNLIKED -> {
+                boolean isUpdated = this.feedRepo.removeLike(event.getPostId(), event.getExplorerId());
+                if(!isUpdated)
+                {
+                    log.info("Stop process add Like in Feed");
+                    return;
+                }
+            }
+
+        }
     }
 
 }

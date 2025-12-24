@@ -9,4 +9,6 @@ public interface FeedRepo
 {
     FeedPost save(FeedPost feedPost);
     Optional<FeedPost> findByPostId(UUID postId);
+    boolean removeLike(UUID postId, UUID explorerId);
+    boolean addLike(UUID postId, UUID explorerId);
 }

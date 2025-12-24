@@ -1,12 +1,16 @@
 package com.example.feed.infrastructure.event;
 
+import com.example.feed.logic.FeedService;
 import com.example.shared.interaction.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class InteractionFeedEventListenerImpl implements InteractionEventListener
 {
+    @Autowired
+    private FeedService feedService;
 
     @Override
     @EventListener
@@ -18,6 +22,7 @@ public class InteractionFeedEventListenerImpl implements InteractionEventListene
     @EventListener
     public void onFeedPostLiked(InteractionEventToggleLike eventLike) {
         System.out.println("Feed receive like");
+        this.feedService.processLike(eventLike);
     }
 
     @Override
