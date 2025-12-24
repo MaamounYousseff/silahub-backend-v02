@@ -29,6 +29,7 @@ public class InteractionFeedEventListenerImpl implements InteractionEventListene
     @EventListener
     public void onFeedPostUpvoted(InteractionEventToggleUpvote eventUpvote) {
         System.out.println("Feed receive upvote");
+        this.feedService.processUpvote(eventUpvote);
     }
 
     @Override

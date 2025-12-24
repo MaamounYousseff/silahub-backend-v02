@@ -11,4 +11,7 @@ public interface FeedRepo
     Optional<FeedPost> findByPostId(UUID postId);
     boolean removeLike(UUID postId, UUID explorerId);
     boolean addLike(UUID postId, UUID explorerId);
+    boolean addUpvote(UUID postId, UUID promoterId, Long boostAt);
+    boolean  updateUpvote(UUID postId, UUID promoterId);
+    boolean removeUpvote(UUID postId, UUID promoterId);
 }

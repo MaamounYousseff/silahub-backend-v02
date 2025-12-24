@@ -27,10 +27,12 @@ public class FeedRepoImpl implements FeedRepo
      * Save a FeedPost into MongoDB.
      * If the postId already exists, it will be updated.
      */
+    @Override
     public FeedPost save(FeedPost feedPost) {
         return mongoTemplate.save(feedPost, "feeds");
     }
 
+    @Override
     public Optional<FeedPost> findByPostId(UUID postId) {
         Query query = new Query(Criteria.where("postId").is(postId));
         return Optional.ofNullable(
@@ -38,6 +40,7 @@ public class FeedRepoImpl implements FeedRepo
         );
     }
 
+    @Override
     public boolean addLike(UUID postId, UUID explorerId) {
         Query query = Query.query(
                 Criteria.where("_id").is(postId)
@@ -57,6 +60,7 @@ public class FeedRepoImpl implements FeedRepo
      * -1 tempTotalLike ONLY if post is boosted
      * $pull is an atomic, in-place operation : so no performance issue
      */
+    @Override
     public boolean removeLike(UUID postId, UUID explorerId) {
         Query query = Query.query(
                 Criteria.where("_id").is(postId)
@@ -71,4 +75,55 @@ public class FeedRepoImpl implements FeedRepo
 
         return result.getModifiedCount() > 0;
     }
+
+    @Override
+    public boolean addUpvote(UUID postId, UUID promoterId, Long boostAt) {
+        Query query = Query.query(
+                Criteria.where("_id").is(postId)
+                        .and("upvotedBy").ne(promoterId)
+        );
+
+        Update update = new Update()
+                .inc("tempTotalUpvote", 1)
+                .addToSet("upvotedBy", promoterId)
+                .set("boostedAt", boostAt);
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, "feeds");
+
+        return result.getModifiedCount() > 0;
+    }
+
+    @Override
+    public boolean updateUpvote(UUID postId, UUID promoterId) {
+        Query query = Query.query(
+                Criteria.where("_id").is(postId)
+                        .and("upvotedBy").ne(promoterId)
+        );
+
+        Update update = new Update()
+                .inc("tempTotalUpvote", 1)
+                .addToSet("upvotedBy", promoterId);
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, "feeds");
+
+        return result.getModifiedCount() > 0;
+    }
+
+    @Override
+    public boolean removeUpvote(UUID postId, UUID promoterId) {
+        Query query = Query.query(
+                Criteria.where("_id").is(postId)
+                        .and("upvotedBy").is(promoterId) // Only update if user has liked
+        );
+
+        Update update = new Update()
+                .inc("tempTotalUpvote", -1)
+                .pull("upvotedBy", promoterId); // Remove user from array
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, "feeds");
+
+        return result.getModifiedCount() > 0;
+    }
+
+
 }

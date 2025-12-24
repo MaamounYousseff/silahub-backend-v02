@@ -8,6 +8,7 @@ import com.example.feed.domain.model.FeedPost;
 import com.example.feed.domain.repo.FeedRepo;
 import com.example.feed.domain.repo.UserFeedPostHistoryRepo;
 import com.example.shared.interaction.InteractionEventToggleLike;
+import com.example.shared.interaction.InteractionEventToggleUpvote;
 import com.example.shared.security.CurrentUserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +149,40 @@ public class FeedService
                 if(!isUpdated)
                 {
                     log.info("Stop process add Like in Feed");
+                    return;
+                }
+            }
+
+        }
+    }
+
+    public void processUpvote(InteractionEventToggleUpvote event)
+    {
+//        in the case of insert we need to update boostedAt eventToggleUpvote.getBoostedAt()
+        switch (event.getToggleUpvoteState())
+        {
+            case INSERT -> {
+                boolean isUpdated = this.feedRepo.addUpvote(event.getPostId(), event.getPromoterId(), event.getBoostedAt());
+                if(!isUpdated)
+                {
+                    log.info("Stop process add upvote in Feed");
+                    return;
+                }
+            }
+            case UPDATE_ADDED_UPVOTE -> {
+                boolean isUpdated = this.feedRepo.updateUpvote(event.getPostId(), event.getPromoterId());
+                if(!isUpdated)
+                {
+                    log.info("Stop process update upvote in Feed");
+                    return;
+                }
+            }
+
+            case UPDATE_REMOVED_UPVOTE -> {
+                boolean isUpdated = this.feedRepo.removeUpvote(event.getPostId(), event.getPromoterId());
+                if(!isUpdated)
+                {
+                    log.info("Stop process remove upvote in Feed");
                     return;
                 }
             }
