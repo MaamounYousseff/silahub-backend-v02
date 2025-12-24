@@ -84,7 +84,7 @@ public class BucketRepositoryImpl implements BucketRepository
         return null;
     }
 
-    private String getBucketKey(long score)
+    private String getBucketKey(Double score)
     {
         if(score <=  LOW_BUCKET_SCORE)
             return POST_SCORING_BUCKET_LOW;

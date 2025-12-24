@@ -10,7 +10,7 @@ public class PostScoreBucket
     @Getter
     private UUID postId;
     @Getter
-    private Long score;
+    private double score;
 
 
     // Internal interaction attributes to calculate score internally
@@ -50,12 +50,15 @@ public class PostScoreBucket
     }
 
     private void recalculateScore() {
-        long baseScore = tempTotalClick * 1L + tempTotalLike * 5L + tempTotalUpvote * 3L + (tempTotalWatchTime / 600L);
-
-        // Optionally factor in boostedAt (e.g., decay or boost)
-        double factor = 1.0;
+        long baseScore = tempTotalClick * 1L + tempTotalLike * 5L + tempTotalUpvote * 40L + (tempTotalWatchTime / 600L);
+        double factor = 1;
         if (boostedAt != null && boostedAt > 0) {
-            factor = 1.0 / (1.0 + (boostedAt / 3600.0 * 0.05)); // example decay per hour
+            long nowSeconds = System.currentTimeMillis() / 1000;
+            double hoursSinceBoost =
+                    (nowSeconds - boostedAt) / 3600000.0;
+
+            factor = 1.0 / (1.0 + hoursSinceBoost * 0.05);
+
         }
 
         this.score = Math.round(baseScore * factor);
