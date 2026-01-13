@@ -1,6 +1,5 @@
 package com.example.post.web;
 
-import java.util.List;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,26 +9,13 @@ import lombok.Setter;
 @Setter
 public class PostCreateRequest {
 
-    @NotBlank(message = "thumbnailUrl is required")
-    @Size(max = 500, message = "thumbnailUrl must be at most 500 characters")
-    @Pattern(
-            regexp = "^(http|https)://.*$",
-            message = "thumbnailUrl must be a valid URL"
-    )
-    private String thumbnailUrl;
+    @Min(value = 0, message = "Number of images must be at least 0")
+    @Max(value = 3, message = "Number of images must be at most 3")
+    private int imageCount;
 
-    @NotBlank(message = "videoUrl is required")
-    @Size(max = 500, message = "videoUrl must be at most 500 characters")
-    @Pattern(
-            regexp = "^(http|https)://.*$",
-            message = "videoUrl must be a valid URL"
-    )
-    private String videoUrl;
-
-    @NotNull(message = "imageUrls is required")
-    @Size(max = 3,  message = "Maximum 3 images are allowed")
-    @Size(min = 1,  message = "minimum 1 image are allowed")
-    private List<@NotBlank @Pattern(regexp = "^(http|https)://.*$", message = "Each imageUrl must be a valid URL") String> imageUrls;
+    @Min(value = 0, message = "Number of thumbnails must be at least 0")
+    @Max(value = 1, message = "Number of thumbnails must be at most 1")
+    private int thumbnailCount;
 
     @NotBlank(message = "title is required")
     @Size(max = 255, message = "title must be at most 255 characters")

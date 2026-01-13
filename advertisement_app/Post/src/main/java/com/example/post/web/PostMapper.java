@@ -13,9 +13,6 @@ public class PostMapper
         Post post = new Post();
 
         post.setCreatorId(creatorId);
-        post.setThumbnailUrl(request.getThumbnailUrl());
-        post.setVideoUrl(request.getVideoUrl());
-        post.setImageUrls(request.getImageUrls());
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setContentType(request.getContentType());
