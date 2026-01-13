@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>advertisement_app</name>
-	<description>SILAHub version 02 . Migrate to Clean Arch. with DDD rules</description>
+	<description>SILAHub version 03 .  Persistent to aws s3 |  Transcodin </description>
 	<url/>
 	<licenses>
 		<license/>
