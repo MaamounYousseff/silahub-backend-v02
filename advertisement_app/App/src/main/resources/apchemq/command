@@ -1,0 +1,10 @@
+open cmd
+D:\apache-activemq-6.2.0\bin
+start the server : activemq start
+------------------------------------
+
+
+active mq admin page :
+localhost:8161
+username : admin
+password : admin

@@ -26,8 +26,11 @@
 		<module>Feed</module>
 		<module>Interaction</module>
 		<module>Scoring</module>
-		<module>SharedKernel</module>
-	</modules>
+        <module>Post</module>
+		<module>App</module>
+		<module>Shared</module>
+        <module>Test</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
@@ -36,7 +39,23 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.example</groupId>
+				<artifactId>Shared</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -44,6 +63,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -54,5 +79,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
 
 </project>

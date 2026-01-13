@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Enabled</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+        }
+
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .user-info {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #1f2937;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-enabled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-enabled {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .button-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <div class="icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+        </div>
+        <h1>User Enabled Successfully</h1>
+        <p class="subtitle">The following user account has been enabled</p>
+    </div>
+
+    <div class="user-info">
+        <div class="info-row">
+            <span class="info-label">User ID</span>
+            <span class="info-value" th:text="${user.id}">UUID</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value" th:text="${user.username}">username</span>
+        </div>
+        <div class="info-row" th:if="${user.firstName != null or user.lastName != null}">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">
+                    <span th:text="${user.firstName != null ? user.firstName : ''}">First</span>
+                    <span th:text="${user.lastName != null ? ' ' + user.lastName : ''}">Last</span>
+                </span>
+        </div>
+        <div class="info-row" th:if="${user.phoneNumber != null}">
+            <span class="info-label">Phone</span>
+            <span class="info-value" th:text="${user.phoneNumber}">+1234567890</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="info-value">
+                    <span class="status-badge"
+                          th:classappend="${user.isEnabled} ? 'status-enabled' : 'status-enabled'"
+                          th:text="${user.isEnabled} ? 'Enabled' : 'Enabled'">
+                        Enabled
+                    </span>
+                </span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Account Locked</span>
+            <span class="info-value">
+                    <span class="status-badge"
+                          th:classappend="${user.accountNonLocked} ? 'status-enabled' : 'status-enabled'"
+                          th:text="${user.accountNonLocked} ? 'No' : 'Yes'">
+                        No
+                    </span>
+                </span>
+        </div>
+        <div class="info-row" th:if="${user.lastLogin != null}">
+            <span class="info-label">Last Login</span>
+            <span class="info-value" th:text="${#temporals.format(user.lastLogin, 'MMM dd, yyyy HH:mm')}">Date</span>
+        </div>
+        <div class="info-row" th:if="${user.updatedAt != null}">
+            <span class="info-label">Updated At</span>
+            <span class="info-value" th:text="${#temporals.format(user.updatedAt, 'MMM dd, yyyy HH:mm')}">Date</span>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <a href="/admin/v0/users" class="btn">OK</a>
+    </div>
+</div>
+</body>
+</html>
