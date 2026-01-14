@@ -26,7 +26,6 @@ import static com.example.post.Constant.*;
 public class PostService
 {
 
-
     @Autowired
     private CurrentUserContext currentUserContext;
     @Autowired

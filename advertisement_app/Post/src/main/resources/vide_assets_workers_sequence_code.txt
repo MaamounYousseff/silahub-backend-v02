@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+
+    participant JobVideo as PostService Video Job
+    participant JobAsset as PostService Asset Job
+    participant SQS_Video as SQS (post_service_video_upload)
+    participant SQS_Asset as SQS (post_service_asset_upload)
+    participant PostDB as Post DB
+    participant AssetDB as Post Assets DB
+
+    %% Parallel workers
+    par Video Upload Worker (every 1 minute)
+        loop Poll every 1 minute
+            JobVideo - SQS_Video Receive message
+            alt Post exists
+                JobVideo - PostDB Check object_key_prefix in Post table
+                alt Prefix NOT found
+                    JobVideo - SQS_Video Delete message
+                else Prefix found
+                    JobVideo - PostDB Update post status = DRAFT
+                    JobVideo - SQS_Video Delete message
+                end
+            else Post not found
+                JobVideo - SQS_Video Delete message
+            end
+            JobVideo - SQS_Video Read next message immediately
+        end
+    and Asset Upload Worker (every 1 minute)
+        loop Poll every 1 minute
+            JobAsset - SQS_Asset Receive message
+            alt Post exists
+                JobAsset - AssetDB Check s3_asset_prefix in post_assets table
+                alt Prefix NOT found
+                    JobAsset - SQS_Asset Delete message
+                else Prefix found
+                    JobAsset - PostDB Update post status = ACTIVE
+                    JobAsset - SQS_Asset Delete message
+                end
+            else Post not found
+                JobAsset - SQS_Asset Delete message
+            end
+            JobAsset - SQS_Asset Read next message immediately
+        end
+    end
