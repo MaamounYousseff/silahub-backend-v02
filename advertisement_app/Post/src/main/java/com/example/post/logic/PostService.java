@@ -19,21 +19,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.post.Constant.*;
+
 @Service
 @Slf4j
 public class PostService
 {
-    final String DELIMITER = "_";
-    final String VIDEO_URI_SUFFIX = "v";
-    final String IMAGE_Name_SUFFIX = "i";
-    final String THUMBNAIL_Name_SUFFIX = "t";
 
-    public static String S3_DELIMINETER = "/";
-    public static String IMAGE_PATH = "posts/<object_s3_key>/images";
-    public static String NEW_IMAGE_PATH = "posts/assets/<object_s3_name>";
-    public static String THUMBNAIL_PATH = "posts/<object_s3_key>/thumbnails";
-    public static String NEW_THUMBNAIL_PATH = "posts/assets/<object_s3_name>";
-    public static String BUCKET_NAME = "amzn-s3-bucket-lb-01";
 
     @Autowired
     private CurrentUserContext currentUserContext;
@@ -45,8 +37,6 @@ public class PostService
     private PostInteractionPort postInteractionPort;
     @Autowired
     private PostAssetRepo postAssetRepo;
-    @Autowired
-    private JobVideoRepo jobVideoRepo;
 
 
     @jakarta.transaction.Transactional
@@ -63,16 +53,6 @@ public class PostService
 
         Post storedPost = postRepository.save(post);
         log.info("Post saved with ID={}", storedPost.getId());
-
-        JobVideo jobVideo = JobVideo.builder()
-                .videoS3Key(post.getObjectS3KeyPrefix())
-                .status("pending")
-                .creatorId(currentUserContext.getUserId())
-                .build();
-
-        jobVideoRepo.save(jobVideo);
-        log.info("JobVideo created with videoS3Key={}", jobVideo.getVideoS3Key());
-
 
         List<PostAsset> assets = new ArrayList<>();
         for (int i = 0; i < storedPost.getImageCount(); i++) {
