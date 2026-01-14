@@ -24,13 +24,6 @@ public class PostCreateRequest {
     @Size(max = 2000, message = "description must be at most 2000 characters")
     private String description;
 
-    @NotBlank(message = "contentType is required")
-    @Pattern(
-            regexp = "^(video|image|text)$",
-            message = "contentType must be one of: video, image, text"
-    )
-    private String contentType;
-
     @NotNull(message = "isVisible is required")
     private Boolean isVisible;
 }

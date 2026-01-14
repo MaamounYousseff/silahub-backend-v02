@@ -29,12 +29,10 @@ public class PostRestController
         return ResponseEntity.ok(SilahubResponseUtil.success(post, "Post created successfully", Map.of()));
     }
 
-    //    just for test
-    @GetMapping("/test")
-    public void asd()
+    @GetMapping("/hi")
+    public String hi()
     {
-        UUID postId = UUID.fromString("8cc2998b-f5f1-43c4-9be8-ad5949351851");
-
-        this.postService.postCreated(postId);
+        return "hi";
     }
+
 }

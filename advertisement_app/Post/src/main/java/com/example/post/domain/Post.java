@@ -1,4 +1,5 @@
 package com.example.post.domain;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +29,14 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "content_type", nullable = false, length = 50)
-    private String contentType;
+    @Column(name = "object_s3_key_prefix", nullable = false)
+    private String objectS3KeyPrefix;
 
-    @Column(name = "video_uri", nullable = false, columnDefinition = "TEXT")
-    private String videoUri;
+    @Column(name = "object_s3_key_suffix")
+    private String objectS3KeySuffix;
+
+    @Column(name = "s3_video_uri")
+    private String s3VideoUri;
 
     @Column(name = "is_visible", nullable = false)
     private Boolean isVisible = true;
@@ -40,15 +44,16 @@ public class Post {
     @Column(nullable = false, length = 50)
     private String status = "pending";
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    @Column(name = "image_count", nullable = false)
+    private Short imageCount;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    @Column(name = "thumbnail_count", nullable = false)
+    private Short thumbnailCount;
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime updatedAt = OffsetDateTime.now();
-
+    // Lazy-loaded list of assets for this post
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private List<PostAsset> assets;
 
     public static boolean postExist(Optional<Post> postOptional)
     {

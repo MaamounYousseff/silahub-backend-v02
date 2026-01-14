@@ -1,13 +1,9 @@
 package com.example.post.logic;
 
-
 import com.example.post.api.PostInteractionCreatedDto;
 import com.example.post.api.PostInteractionPort;
-import com.example.post.domain.PostAsset;
-import com.example.post.domain.PostAssetRepo;
+import com.example.post.domain.*;
 import com.example.post.web.PostMapper;
-import com.example.post.domain.Post;
-import com.example.post.domain.PostRepository;
 import com.example.post.web.PostCreateRequest;
 import com.example.shared.post.EventPostCreated;
 import com.example.shared.security.CurrentUserContext;
@@ -18,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +23,18 @@ import java.util.UUID;
 @Slf4j
 public class PostService
 {
+    final String DELIMITER = "_";
+    final String VIDEO_URI_SUFFIX = "v";
+    final String IMAGE_Name_SUFFIX = "i";
+    final String THUMBNAIL_Name_SUFFIX = "t";
+
+    public static String S3_DELIMINETER = "/";
+    public static String IMAGE_PATH = "posts/<object_s3_key>/images";
+    public static String NEW_IMAGE_PATH = "posts/assets/<object_s3_name>";
+    public static String THUMBNAIL_PATH = "posts/<object_s3_key>/thumbnails";
+    public static String NEW_THUMBNAIL_PATH = "posts/assets/<object_s3_name>";
+    public static String BUCKET_NAME = "amzn-s3-bucket-lb-01";
+
     @Autowired
     private CurrentUserContext currentUserContext;
     @Autowired
@@ -36,11 +45,71 @@ public class PostService
     private PostInteractionPort postInteractionPort;
     @Autowired
     private PostAssetRepo postAssetRepo;
+    @Autowired
+    private JobVideoRepo jobVideoRepo;
 
+
+    @jakarta.transaction.Transactional
     public Post createPost(PostCreateRequest postRequest)
     {
-        Post post = PostMapper.fromPostCreateRequest(postRequest,currentUserContext.getUserId());
-        return postRepository.save(post);
+        log.info("Starting creation of post for userId={}", currentUserContext.getUserId());
+
+        Post post = PostMapper.fromPostCreateRequest(
+                postRequest,
+                currentUserContext.getUserId()
+        );
+        log.debug("Post mapped from request: title='{}', totalImages={}, totalThumbnails={}",
+                post.getTitle(), post.getImageCount(), post.getThumbnailCount());
+
+        Post storedPost = postRepository.save(post);
+        log.info("Post saved with ID={}", storedPost.getId());
+
+        JobVideo jobVideo = JobVideo.builder()
+                .videoS3Key(post.getObjectS3KeyPrefix())
+                .status("pending")
+                .creatorId(currentUserContext.getUserId())
+                .build();
+
+        jobVideoRepo.save(jobVideo);
+        log.info("JobVideo created with videoS3Key={}", jobVideo.getVideoS3Key());
+
+
+        List<PostAsset> assets = new ArrayList<>();
+        for (int i = 0; i < storedPost.getImageCount(); i++) {
+            String imageKey = NEW_THUMBNAIL_PATH.replace("<object_s3_name>" , post.getId().toString()) + DELIMITER + IMAGE_Name_SUFFIX + DELIMITER + i;
+
+            PostAsset imageAsset = PostAsset.builder()
+                    .postId(storedPost.getId())
+                    .type("image")
+                    .s3AssetPrefix(imageKey)
+                    .build();
+
+            postAssetRepo.save(imageAsset);
+            assets.add(imageAsset);
+
+            log.debug("Image PostAsset created: {}");
+        }
+
+        for (int i = 0; i < storedPost.getThumbnailCount(); i++) {
+            String thumbnailKey = NEW_IMAGE_PATH.replace("<object_s3_name>" , post.getId().toString()) + DELIMITER + IMAGE_Name_SUFFIX + DELIMITER + i;
+
+            PostAsset thumbnailAsset = PostAsset.builder()
+                    .postId(storedPost.getId())
+                    .type("thumbnail")
+                    .s3AssetPrefix(thumbnailKey)
+                    .build();
+
+            postAssetRepo.save(thumbnailAsset);
+            assets.add(thumbnailAsset);
+
+            log.debug("Thumbnail PostAsset created: {}");
+        }
+
+        storedPost.setAssets(assets);
+        log.info("Total assets linked to Post ID {}: {}", storedPost.getId(), assets.size());
+
+        log.info("Post creation completed for Post ID={}", storedPost.getId());
+        return storedPost;
     }
 
     @Transactional
@@ -66,7 +135,7 @@ public class PostService
                 .postId(post.getId())
                 .thumbnailUrl(getThumbnail(postAssetList))
                 .ImageUrls(getImagesUri(postAssetList).isEmpty()? null : getImagesUri(postAssetList).get())
-                .videoUrl(post.getVideoUri())
+                .videoUrl(post.getS3VideoUri())
                 .creatorId(post.getCreatorId())
                 .timeStamp(OffsetDateTime.now().toEpochSecond())
                 .boostedAt(postInteractionCreatedDto.getBoostedAt())
@@ -82,7 +151,7 @@ public class PostService
         }
         List<String> images = postAssetList.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("image"))
-                .map(PostAsset::getUri)
+                .map(PostAsset::getS3Uri)
                 .toList();
 
         return images.isEmpty() ? Optional.empty() : Optional.of(images);
@@ -95,7 +164,7 @@ public class PostService
         }
         return postAssetList.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("thumbnail"))
-                .map(PostAsset::getUri)
+                .map(PostAsset::getS3Uri)
                 .findFirst()
                 .orElse(null);
     }

@@ -1,6 +1,5 @@
 package com.example.app;
 
-
 import com.example.feed.FeedConfig;
 import com.example.interaction.InteractionConfig;
 import com.example.post.PostConfig;
