@@ -1,6 +1,7 @@
 package com.example.post.infrastructure;
 
 import com.example.post.domain.PostAssetRepo;
+import com.example.post.logic.PostAssetService;
 import com.example.post.shared.S3EventNotification;
 import com.example.post.shared.S3EventRecord;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
-import java.util.Optional;
 
 import static com.example.post.Constant.BUCKET_NAME;
 import static com.example.post.Constant.S3_DELIMINETER;
@@ -25,7 +25,7 @@ import static com.example.post.Constant.S3_DELIMINETER;
 public class AssetUploadWorker {
 
     @Autowired
-    private PostAssetRepo postAssetRepository;
+    private PostAssetService postAssetService;
     @Autowired
     private SqsClient sqsClient;
     @Autowired
@@ -92,16 +92,9 @@ public class AssetUploadWorker {
             var s3AssetSuffix = str[1];
             var assetUri = BUCKET_NAME + S3_DELIMINETER + s3AssetPrefix + "." + s3AssetSuffix;
 
-            // Check if prefix exists in post_assets table
-            Optional<PostAsset> postAssetOptional = this.postAssetRepository.findByS3AssetPrefix(s3AssetPrefix);
-            if (!PostAsset.exist(postAssetOptional))
-                throw new RuntimeException("There was no postAsset for this prefix: " + s3AssetPrefix);
-            PostAsset postAsset = postAssetOptional.get();
+            PostAsset postAsset = this.postAssetService.findByS3AssetPrefix(s3AssetPrefix);
 
-            // Update postAsset status to ACTIVE
-            int row = this.postAssetRepository.update(postAsset.getId() , assetUri ,s3AssetSuffix , "active");
-            if (row == 0)
-                throw new RuntimeException("Failed to update PostAsset Status to ACTIVE \n PostAsset Id: " + postAsset.getId());
+            this.postAssetService.update(postAsset.getId() , assetUri ,s3AssetSuffix);
 
         } catch (Exception e) {
             log.error("Error processing asset message: " + e.getMessage());

@@ -3,6 +3,7 @@ package com.example.post.infrastructure;
 
 import com.example.post.domain.Post;
 import com.example.post.domain.PostRepository;
+import com.example.post.logic.PostService;
 import com.example.post.shared.S3EventNotification;
 import com.example.post.shared.S3EventRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,12 +26,12 @@ import static com.example.post.Constant.S3_DELIMINETER;
 public class VideoUploadWorker {
 
     @Autowired
-    private PostRepository postRepository;
-    @Autowired
     private SqsClient sqsClient;
     @Autowired
     @Qualifier("awsSqsObjectMapper")
     private ObjectMapper objectMapper;
+    @Autowired
+    private PostService postService;
 
 
     private String sqsQueueUrl = "https://sqs.eu-north-1.amazonaws.com/418962810364/post_service_video_upload";
@@ -90,16 +91,9 @@ public class VideoUploadWorker {
             var objectKeySuffix = str[1];
             var videoUri = BUCKET_NAME + S3_DELIMINETER + objectKeyPrefix + "." + objectKeySuffix;
 
-            // check if prefix exist for a post
-            Optional<Post> postOptional = this.postRepository.findByObjectS3KeyPrefix(objectKeyPrefix);
-            if (!Post.postExist(postOptional))
-                throw new RuntimeException("There was no post for this key : " + objectKeyPrefix);
-            Post post = postOptional.get();
+            Post post = postService.findByObjectS3KeyPrefix(objectKeyPrefix);
 
-            // update post status to draft AND UPDATE THE SUFFIX ALSO
-            int row = this.postRepository.update(post.getId(), videoUri, objectKeySuffix, "draft");
-            if (row == 0)
-                throw new RuntimeException("Failed To update Post Status to draft \n Post Id: " + post.getId());
+            this.postService.updatePostToDraft(post.getId(), videoUri, objectKeySuffix);
 
         } catch (Exception e) {
             log.error("Error processing video message: " + e.getMessage());

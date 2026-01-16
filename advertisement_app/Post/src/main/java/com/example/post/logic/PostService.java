@@ -123,6 +123,20 @@ public class PostService
         this.publisher.publishEvent(eventPostCreated);
     }
 
+    public Post findByObjectS3KeyPrefix(String objectKeyPrefix){
+        Optional<Post> postOptional = this.postRepository.findByObjectS3KeyPrefix(objectKeyPrefix);
+        if (!Post.postExist(postOptional))
+            throw new RuntimeException("There was no post for this key : " + objectKeyPrefix);
+        return postOptional.get();
+    }
+
+    public void updatePostToDraft(UUID postId, String videoUri,String  objectKeySuffix)
+    {
+        int row = this.postRepository.update(postId, videoUri, objectKeySuffix, "draft");
+        if (row == 0)
+            throw new RuntimeException("Failed To update Post Status to draft \n Post Id: " + postId);
+    }
+
 
     private static Optional<List<String>> getImagesUri(List<PostAsset> postAssetList) {
         if (postAssetList == null) {
