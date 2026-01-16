@@ -2,9 +2,9 @@ package com.example.post.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.Optional;
 import java.util.UUID;
 
 @Builder
@@ -12,6 +12,8 @@ import java.util.UUID;
 @Table(name = "post_assets")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostAsset {
 
     @Id
@@ -33,10 +35,20 @@ public class PostAsset {
     private String s3AssetSuffix;
 
     @Column(name = "s3_asset_uri")
-    private String s3Uri;
+    private String s3AssetUri;
 
     @Builder.Default
     @Column(nullable = false)
     private String status = "pending";
+
+
+    public static boolean exist(Optional<PostAsset> postAssetOptional)
+    {
+        if(postAssetOptional.isEmpty())
+            return false;
+        return true;
+    }
+
+
 }
 

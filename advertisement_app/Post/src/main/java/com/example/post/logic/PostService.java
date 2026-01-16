@@ -130,7 +130,7 @@ public class PostService
         }
         List<String> images = postAssetList.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("image"))
-                .map(PostAsset::getS3Uri)
+                .map(PostAsset::getS3AssetUri)
                 .toList();
 
         return images.isEmpty() ? Optional.empty() : Optional.of(images);
@@ -143,7 +143,7 @@ public class PostService
         }
         return postAssetList.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("thumbnail"))
-                .map(PostAsset::getS3Uri)
+                .map(PostAsset::getS3AssetUri)
                 .findFirst()
                 .orElse(null);
     }
