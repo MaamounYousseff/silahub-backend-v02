@@ -37,7 +37,7 @@ public class VideoUploadWorker {
     private String sqsQueueUrl = "https://sqs.eu-north-1.amazonaws.com/418962810364/post_service_video_upload";
 
     // PHASE 1: POLL THE MESSAGES EVERY 20s
-    @Scheduled(fixedRate = 20000)
+//    @Scheduled(fixedRate = 20000)
     public void consumeVideoUploadMessages() {
         log.info("Video Upload Worker - Starting to poll messages");
         try {

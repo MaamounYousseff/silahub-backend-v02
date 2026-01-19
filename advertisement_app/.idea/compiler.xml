@@ -11,6 +11,7 @@
         <module name="Test" />
         <module name="Interaction" />
         <module name="Post" />
+        <module name="MediaIngestion" />
         <module name="Scoring" />
         <module name="Shared" />
         <module name="Feed" />
@@ -27,6 +28,7 @@
       <module name="App" options="-parameters" />
       <module name="Feed" options="-parameters" />
       <module name="Interaction" options="-parameters" />
+      <module name="MediaIngestion" options="-parameters" />
       <module name="Notification" options="-parameters" />
       <module name="Post" options="-parameters" />
       <module name="Scoring" options="-parameters" />

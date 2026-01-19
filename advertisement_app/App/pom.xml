@@ -45,6 +45,13 @@
             <version>${parent.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>MediaIngestion</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+
 
         <dependency>
             <groupId>com.example</groupId>
@@ -69,6 +76,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
 
 
     </dependencies>

@@ -13,13 +13,13 @@ public interface PostRepository extends JpaRepository<Post, UUID>
     Optional<Post> findByObjectS3KeyPrefix(String objectKeyPrefix);
 
     @Transactional
-        @Modifying
-        @Query("""
+    @Modifying
+    @Query("""
         UPDATE Post p
         SET p.s3VideoUri = :videoUri,
             p.objectS3KeySuffix = :objectKeySuffix,
             p.status = :status
         WHERE p.id = :postId
     """)
-        int update(UUID postId ,String videoUri ,String objectKeySuffix, String status);
+    int update(UUID postId ,String videoUri ,String objectKeySuffix, String status);
 }

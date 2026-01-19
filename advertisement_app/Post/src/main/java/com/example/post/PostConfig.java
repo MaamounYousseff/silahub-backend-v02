@@ -33,20 +33,4 @@ public class PostConfig
     }
 
 
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper(ObjectMapper defaultMapper) {
-        // Return the auto-configured mapper that Spring Boot provides
-        // This preserves all Spring Boot customizations (JavaTimeModule, JDK8Module, etc.)
-        return defaultMapper;
-    }
-
-    @Bean
-    @Qualifier("awsSqsObjectMapper")
-    public ObjectMapper awsSqsObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
-    }
 }
