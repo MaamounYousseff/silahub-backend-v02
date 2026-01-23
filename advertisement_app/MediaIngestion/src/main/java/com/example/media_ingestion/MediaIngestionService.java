@@ -28,9 +28,6 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import static com.example.media_ingestion.MediaIngestionHelper.*;
-import static com.example.media_ingestion.MediaIngestionHelper.getTranscodinWorker360p;
-import static com.example.media_ingestion.MediaIngestionHelper.getTranscodinWorker720pHQ;
-import static com.example.media_ingestion.MediaIngestionHelper.getTranscodinWorker720pMQ;
 
 @Slf4j
 @Service

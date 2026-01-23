@@ -1,7 +1,6 @@
 package com.example.test;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Immutable;
 
 @Entity
 @Table(name = "sample_table")

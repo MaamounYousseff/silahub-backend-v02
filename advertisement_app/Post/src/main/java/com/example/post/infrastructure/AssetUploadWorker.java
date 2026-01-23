@@ -1,6 +1,5 @@
 package com.example.post.infrastructure;
 
-import com.example.post.domain.PostAssetRepo;
 import com.example.post.logic.PostAssetService;
 import com.example.post.shared.S3EventNotification;
 import com.example.post.shared.S3EventRecord;

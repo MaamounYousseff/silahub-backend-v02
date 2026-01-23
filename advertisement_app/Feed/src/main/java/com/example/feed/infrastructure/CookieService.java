@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import static org.springframework.boot.web.server.Cookie.SameSite.NONE;
 import java.util.Arrays;
 import java.util.Optional;
 
