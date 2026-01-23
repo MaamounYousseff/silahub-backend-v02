@@ -24,6 +24,13 @@
             <artifactId>Shared</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>SharedModuleTest</artifactId>
+            <version>${parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 <!--        it should be just for api package -->
 
 
@@ -56,12 +63,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sqs</artifactId>
             <version>2.20.109</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.4</version>
         </dependency>
 
     </dependencies>

@@ -2,6 +2,8 @@ package com.example.media_ingestion;
 
 import com.example.media_ingestion.sqsevent.S3EventNotification;
 import com.example.media_ingestion.sqsevent.S3EventRecord;
+import com.example.post.api.MediaChunkedDto;
+import com.example.post.api.PostMediaIngestionPort;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,8 @@ import static com.example.media_ingestion.MediaIngestionHelper.getTranscodinWork
 @Service
 public class MediaIngestionService {
 
+//    private PostMediaIngestionPort mediaIngestion;
+
     public static final String S3_DELIMITER = "/";
     public static final String S3_BUCKET_NAME = "amzn-s3-bucket-lb-01";
     public static final String SQS_QUEUE_URL = "https://sqs.eu-north-1.amazonaws.com/418962810364/transcoding-queue";
@@ -54,6 +58,7 @@ public class MediaIngestionService {
     private FFmpeg ffmpeg;
     private FFprobe ffprobe;
     private CountDownLatch countDownLatch;
+    private PostMediaIngestionPort postMediaIngestionPort;
 
     private String fileName;
     private double duration;
@@ -65,7 +70,7 @@ public class MediaIngestionService {
     private MediaIngestionWorker w360;
 
     @Autowired
-    public MediaIngestionService(@Qualifier("awsSqsObjectMapper") ObjectMapper objectMapper, S3TransferManager s3TransferManager) {
+    public MediaIngestionService(@Qualifier("awsSqsObjectMapper") ObjectMapper objectMapper, S3TransferManager s3TransferManager, @Autowired PostMediaIngestionPort postMediaIngestionPort) {
         this.objectMapper = objectMapper;
         this.transferManager = s3TransferManager;
     }
@@ -127,7 +132,6 @@ public class MediaIngestionService {
             MediaIngestionHelper.downloadFromS3(bucketName, objectKey, TEMP_FILE, transferManager);
             log.info("Download completed: {}", TEMP_FILE);
 
-
             double duration = getVideoDuration(TEMP_FILE, ffprobe);
             log.info("Video duration: {} seconds", duration);
 
@@ -143,6 +147,20 @@ public class MediaIngestionService {
 
             Files.deleteIfExists(Paths.get(TEMP_FILE));
             log.info("Transcoding completed for {}", objectKeyName);
+
+//        TODO..  Tell Post Service that video is chunked.
+            String objectKeyPrefix = getObjectKeyPrefix(objectKey);
+            MediaChunkedDto mediaChunkedDto = new MediaChunkedDto();
+            mediaChunkedDto.setObjectKeyPrefix(objectKeyPrefix);
+            postMediaIngestionPort.onVideoChunked(mediaChunkedDto);
         }
+    }
+
+
+    private String getObjectKeyPrefix(String objectKey)
+    {
+        String[] str = objectKey.split("\\.");
+        var objectKeyPrefix = str[0];
+        return objectKeyPrefix;
     }
 }

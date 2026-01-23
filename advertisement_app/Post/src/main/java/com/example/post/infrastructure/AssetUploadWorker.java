@@ -32,7 +32,7 @@ public class AssetUploadWorker {
     @Qualifier("awsSqsObjectMapper")
     private ObjectMapper objectMapper;
 
-    private String sqsQueueUrl = "https://sqs.eu-north-1.amazonaws.com/418962810364/post_service_asset_upload";
+    private final String sqsQueueUrl = "https://sqs.eu-north-1.amazonaws.com/418962810364/post_service_asset_upload";
 
     // PHASE 1: POLL THE MESSAGES EVERY 20 s
     @Scheduled(fixedRate = 20000)
@@ -84,7 +84,7 @@ public class AssetUploadWorker {
 
             var objectKey = record.getS3().getObject().getKey();
 
-            String str[] = objectKey.split("\\.");
+            String[] str = objectKey.split("\\.");
             if (str.length < 2)
                 throw new RuntimeException("Invalid asset prefix format " );
 

@@ -2,6 +2,8 @@ package com.example.media_ingestion;
 
 import com.example.media_ingestion.sqsevent.S3EventNotification;
 import com.example.media_ingestion.sqsevent.S3EventRecord;
+import com.example.post.api.MediaChunkedDto;
+import com.example.post.api.PostMediaIngestionPort;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.bramp.ffmpeg.FFprobe;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.Commit;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
 import software.amazon.awssdk.transfer.s3.model.CompletedFileDownload;
@@ -27,7 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 
-@SpringBootTest(classes = {MediaIngestionConfig.class, com.example.shared.SharedConfig.class})
+@SpringBootTest(classes = {MediaIngestionConfig.class,
+        com.example.shared.SharedConfig.class,
+        com.example.post.PostConfig.class,
+        com.example.shared_module_test.TestUserContext.class,
+        com.example.interaction.InteractionConfig.class
+})
 @ComponentScan(basePackages = "com.example.transcodin")
 public class MediaIngestionServiceTest {
 
@@ -39,6 +47,9 @@ public class MediaIngestionServiceTest {
     @Autowired
     @Qualifier("awsSqsObjectMapper")
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private PostMediaIngestionPort postMediaIngestionPort;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -90,17 +101,17 @@ public class MediaIngestionServiceTest {
 
 
     @Test
+//    @Commit
     void testChunkingAndUpload() throws IOException, ExecutionException, InterruptedException {
          MediaIngestionWorker w1080 ;
          MediaIngestionWorker w720HQ;
          MediaIngestionWorker w720MQ;
          MediaIngestionWorker w360;
 
-//      Given
-//        String objectKey = "posts/raw/e84988ad-a4af-499f-bae5-e51d568491da_v.mp4";
+//      Given + video should be stored in temp file with the same name
         Path videoPath = Paths.get(TEMP_FILE);
         assertTrue(Files.exists(videoPath), "Video file must exist before checking duration");
-        String objectKey = "posts/raw/objectkeyname.mp4";
+        String objectKey = "posts/raw/3be8d5ef-aa58-4dad-aaa1-186256d42441_v.mp4";
 
 //        When
         String[] pathParts = objectKey.split("/");
@@ -122,5 +133,25 @@ public class MediaIngestionServiceTest {
         Files.deleteIfExists(Paths.get(TEMP_FILE));
         log.info("Transcoding completed {}");
 
+        String objectKeyPrefix = getObjectKeyPrefix(objectKey);
+        String objectKeySuffix = getObjectKeySuffix(objectKey);
+        MediaChunkedDto mediaChunkedDto = new MediaChunkedDto();
+        mediaChunkedDto.setObjectKeyPrefix(objectKeyPrefix);
+        mediaChunkedDto.setObjectKeySuffix(objectKeySuffix);
+        postMediaIngestionPort.onVideoChunked(mediaChunkedDto);
+    }
+
+    private String getObjectKeyPrefix(String objectKey)
+    {
+        String[] str = objectKey.split("\\.");
+        var objectKeyPrefix = str[0];
+        return objectKeyPrefix;
+    }
+
+    private String getObjectKeySuffix(String objectKey)
+    {
+        String[] str = objectKey.split("\\.");
+        var objectKeySuffix = str[1];
+        return objectKeySuffix;
     }
 }

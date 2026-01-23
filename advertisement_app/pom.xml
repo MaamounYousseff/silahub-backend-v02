@@ -31,7 +31,8 @@
 		<module>Shared</module>
         <module>Test</module>
         <module>MediaIngestion</module>
-    </modules>
+		<module>SharedModuleTest</module>
+	</modules>
 	<scm>
 		<connection/>
 		<developerConnection/>

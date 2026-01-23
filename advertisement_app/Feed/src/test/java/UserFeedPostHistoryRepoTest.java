@@ -11,9 +11,7 @@ import java.util.UUID;
 @SpringBootTest(classes = com.example.feed.FeedConfig.class)
 @ComponentScan("com.example.feed")
 public class UserFeedPostHistoryRepoTest
-
 {
-
     @Autowired
     private UserFeedPostHistoryRepo userFeedPostHistoryRepo;
 

@@ -61,5 +61,13 @@ public class Post {
             return false;
         return true;
     }
+
+    public static boolean objectExistsWithKeyPrefix(Optional<Post> postOptional)
+    {
+        if(postOptional.isEmpty())
+            return false;
+        return true;
+    }
 }
+
 

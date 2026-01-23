@@ -25,7 +25,6 @@ import static com.example.post.Constant.*;
 @Slf4j
 public class PostService
 {
-
     @Autowired
     private CurrentUserContext currentUserContext;
     @Autowired
@@ -160,6 +159,28 @@ public class PostService
                 .map(PostAsset::getS3AssetUri)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void postUploadCompleted(Post postIn)
+    {
+        String objectS3Key= postIn.getObjectS3KeyPrefix();
+        Optional<Post> postOptional = postRepository.findByObjectS3KeyPrefix(objectS3Key);
+
+        boolean postExist = Post.objectExistsWithKeyPrefix(postOptional);
+
+        if(!postExist)
+        {
+            log.info("No Post with that object key prefix : " + postIn.getObjectS3KeyPrefix());
+            return;
+        }
+
+
+        Post retrievalPost = postOptional.get();
+        retrievalPost.setStatus("active");
+        retrievalPost.setS3VideoUri(postIn.getObjectS3KeyPrefix()+ "." + postIn.getObjectS3KeySuffix());
+        retrievalPost.setObjectS3KeySuffix(postIn.getObjectS3KeySuffix());
+
+        this.postRepository.save(retrievalPost);
     }
 
 

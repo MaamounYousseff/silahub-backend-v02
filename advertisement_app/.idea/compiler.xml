@@ -2,11 +2,13 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="App" />
+        <module name="SharedModuleTest" />
         <module name="UserAdmin" />
         <module name="Test" />
         <module name="Interaction" />
@@ -35,6 +37,7 @@
       <module name="Security" options="-parameters" />
       <module name="Shared" options="-parameters" />
       <module name="SharedKernel" options="-parameters" />
+      <module name="SharedModuleTest" options="-parameters" />
       <module name="Test" options="-parameters" />
       <module name="UserAdmin" options="-parameters" />
       <module name="advertisement_app" options="" />

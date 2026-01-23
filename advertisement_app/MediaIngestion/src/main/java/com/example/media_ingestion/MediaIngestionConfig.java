@@ -41,4 +41,5 @@ public class MediaIngestionConfig
                 .s3Client(s3Client)
                 .build();
     }
+
 }
