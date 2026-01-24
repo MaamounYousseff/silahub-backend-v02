@@ -121,6 +121,13 @@ public class MediaIngestionService {
         S3EventNotification eventNotification = objectMapper.readValue(message.body(), S3EventNotification.class);
 
         for (S3EventRecord record : eventNotification.getRecords()) {
+            String eventName = record.getEventName();
+            if (eventName == null && !eventName.startsWith("ObjectCreated"))
+            {
+                log.error("Invalid Event Name");
+                return;
+            }
+
             String bucketName = record.getS3().getBucket().getName();
             objectKey = record.getS3().getObject().getKey();
             log.info("Processing S3 object: bucket={}, key={}", bucketName, objectKey);
