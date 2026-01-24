@@ -10,7 +10,7 @@ public class TestUserContext implements CurrentUserContext {
 
     @Override
     public UUID getUserId() {
-        return UUID.randomUUID();
+        return UUID.fromString("cfd8a81c-7bae-4f3b-a8f2-f1e280e51b43");
     }
 
 }

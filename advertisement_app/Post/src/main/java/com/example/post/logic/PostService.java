@@ -3,8 +3,7 @@ package com.example.post.logic;
 import com.example.post.api.PostInteractionCreatedDto;
 import com.example.post.api.PostInteractionPort;
 import com.example.post.domain.*;
-import com.example.post.web.PostMapper;
-import com.example.post.web.PostCreateRequest;
+import com.example.post.web.PostIntentCreateRequest;
 import com.example.shared.post.EventPostCreated;
 import com.example.shared.security.CurrentUserContext;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.post.Constant.*;
+import static com.example.post.web.PostMapper.fromPostIntentCreateRequest;
 
 @Service
 @Slf4j
@@ -35,14 +40,16 @@ public class PostService
     private PostInteractionPort postInteractionPort;
     @Autowired
     private PostAssetRepo postAssetRepo;
+    @Autowired
+    private S3Presigner s3Presigner;
 
 
     @jakarta.transaction.Transactional
-    public Post createPost(PostCreateRequest postRequest)
+    public Post createPost(PostIntentCreateRequest postRequest)
     {
         log.info("Starting creation of post for userId={}", currentUserContext.getUserId());
 
-        Post post = PostMapper.fromPostCreateRequest(
+        Post post = fromPostIntentCreateRequest(
                 postRequest,
                 currentUserContext.getUserId()
         );
@@ -174,13 +181,40 @@ public class PostService
             return;
         }
 
-
         Post retrievalPost = postOptional.get();
         retrievalPost.setStatus("active");
         retrievalPost.setS3VideoUri(postIn.getObjectS3KeyPrefix()+ "." + postIn.getObjectS3KeySuffix());
         retrievalPost.setObjectS3KeySuffix(postIn.getObjectS3KeySuffix());
 
         this.postRepository.save(retrievalPost);
+    }
+
+
+    public String createPostIntent(Post post)
+    {
+        UUID uuid = UUID.randomUUID();
+        String objectKeyPrefix = uuid + "_v";
+        String filePath = "posts/raw/" + objectKeyPrefix;
+        String preSignedUrl = generatePutPresignedUrl(filePath,BUCKET_NAME);
+
+        this.postRepository.save(post);
+        return preSignedUrl;
+
+    }
+    private String generatePutPresignedUrl(String filePath,String bucketName) {
+        PutObjectRequest.Builder putObjectRequestBuilder = PutObjectRequest.builder()
+                .bucket(bucketName )
+                .key(filePath+ ".mp4");
+
+        PutObjectRequest putObjectRequest = putObjectRequestBuilder.build();
+
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(60))
+                .putObjectRequest(putObjectRequest)
+                .build();
+
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+        return presignedRequest.url().toString();
     }
 
 

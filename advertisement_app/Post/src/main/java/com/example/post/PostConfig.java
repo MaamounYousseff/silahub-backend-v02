@@ -1,13 +1,17 @@
 package com.example.post;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 @Configuration
@@ -20,10 +24,30 @@ public class PostConfig
 //    @Value("${aws.region}")
     private String awsRegion = "eu-north-1";
 
+    @Value("${aws.accessKey}")
+    private String accessKey;
+
+    @Value("${aws.secretKey}")
+    private String secretKey;
+
+    @Value("${aws.region}")
+    private String region;
+
     @Bean
     public SqsClient sqsClient() {
         return SqsClient.builder()
                 .region(Region.of(awsRegion))
+                .build();
+    }
+
+
+    @Bean
+    public S3Presigner s3Presigner() {
+        Region awsRegion = Region.of(region);
+        return S3Presigner.builder()
+                .region(awsRegion)
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(accessKey, secretKey)))
                 .build();
     }
 

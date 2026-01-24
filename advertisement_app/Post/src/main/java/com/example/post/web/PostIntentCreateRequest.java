@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PostCreateRequest {
+public class PostIntentCreateRequest {
 
     @Min(value = 0, message = "Number of images must be at least 0")
     @Max(value = 3, message = "Number of images must be at most 3")

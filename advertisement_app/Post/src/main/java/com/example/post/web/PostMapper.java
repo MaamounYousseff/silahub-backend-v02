@@ -9,7 +9,7 @@ public class PostMapper
     public static String S3_DELIMINETER = "/";
     public static String RAW_PATH = "posts/raw/<object_s3_name>";
 
-    public static Post fromPostCreateRequest(PostCreateRequest request, UUID creatorId) {
+    public static Post fromPostIntentCreateRequest(PostIntentCreateRequest request, UUID creatorId) {
         Post post = new Post();
 
         // Basic info

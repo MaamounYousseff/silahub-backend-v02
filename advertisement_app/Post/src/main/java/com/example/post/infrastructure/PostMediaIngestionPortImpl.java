@@ -21,6 +21,6 @@ public class PostMediaIngestionPortImpl implements PostMediaIngestionPort
         post.setObjectS3KeySuffix(mediaChunkedDto.getObjectKeySuffix());
 
         this.postService.postUploadCompleted(post);
-        return false;
+        return true;
     }
 }

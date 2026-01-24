@@ -145,19 +145,35 @@ public class MediaIngestionService {
             Files.deleteIfExists(Paths.get(TEMP_FILE));
             log.info("Transcoding completed for {}", objectKeyName);
 
-//        TODO..  Tell Post Service that video is chunked.
             String objectKeyPrefix = getObjectKeyPrefix(objectKey);
+            String objectKeySuffix = getObjectKeySuffix(objectKey);
             MediaChunkedDto mediaChunkedDto = new MediaChunkedDto();
             mediaChunkedDto.setObjectKeyPrefix(objectKeyPrefix);
+            mediaChunkedDto.setObjectKeySuffix(objectKeySuffix);
             postMediaIngestionPort.onVideoChunked(mediaChunkedDto);
         }
     }
 
 
-    private String getObjectKeyPrefix(String objectKey)
+    private String getObjectKeyPrefix(String objectKey) {
+        String[] parts = objectKey.split("\\.");
+        if (parts.length <= 1) {
+            return objectKey; // no dot, return as-is
+        }
+
+        // Join all parts except the last
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length - 1; i++) {
+            if (i > 0) sb.append(".");
+            sb.append(parts[i]);
+        }
+        return sb.toString();
+    }
+
+    private String getObjectKeySuffix(String objectKey)
     {
         String[] str = objectKey.split("\\.");
-        var objectKeyPrefix = str[0];
-        return objectKeyPrefix;
+        var objectKeySuffix = str[str.length-1];
+        return objectKeySuffix;
     }
 }
