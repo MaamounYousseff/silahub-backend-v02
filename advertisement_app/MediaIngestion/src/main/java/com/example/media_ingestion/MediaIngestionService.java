@@ -67,9 +67,12 @@ public class MediaIngestionService {
     private MediaIngestionWorker w360;
 
     @Autowired
-    public MediaIngestionService(@Qualifier("awsSqsObjectMapper") ObjectMapper objectMapper, S3TransferManager s3TransferManager, @Autowired PostMediaIngestionPort postMediaIngestionPort) {
+    public MediaIngestionService(@Qualifier("awsSqsObjectMapper") ObjectMapper objectMapper,
+                                 S3TransferManager s3TransferManager,
+                                 PostMediaIngestionPort postMediaIngestionPort) {
         this.objectMapper = objectMapper;
         this.transferManager = s3TransferManager;
+        this.postMediaIngestionPort = postMediaIngestionPort;
     }
 
     @PostConstruct

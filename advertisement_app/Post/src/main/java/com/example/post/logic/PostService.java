@@ -4,9 +4,12 @@ import com.example.post.api.PostInteractionCreatedDto;
 import com.example.post.api.PostInteractionPort;
 import com.example.post.domain.*;
 import com.example.post.web.PostIntentCreateRequest;
+import com.example.post.web.PostMapper;
 import com.example.shared.post.EventPostCreated;
 import com.example.shared.security.CurrentUserContext;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.post.Constant.*;
+import static com.example.post.logic.PostServiceHelper.*;
 import static com.example.post.web.PostMapper.fromPostIntentCreateRequest;
 
 @Service
@@ -42,6 +46,7 @@ public class PostService
     private PostAssetRepo postAssetRepo;
     @Autowired
     private S3Presigner s3Presigner;
+
 
 
     @jakarta.transaction.Transactional
@@ -106,27 +111,7 @@ public class PostService
             log.error("Post not exist");
             return;
         }
-        List<PostAsset> postAssetList = this.postAssetRepo.findByPostId(postId);
 
-        Post post = postOptional.get();
-
-//        tightly couple with Interaction Context
-        PostInteractionCreatedDto postInteractionCreatedDto = postInteractionPort.postCreated(post.getId());
-
-        post.setStatus("active");
-        this.postRepository.save(post);
-
-        EventPostCreated eventPostCreated = EventPostCreated.builder()
-                .postId(post.getId())
-                .thumbnailUrl(getThumbnail(postAssetList))
-                .ImageUrls(getImagesUri(postAssetList).isEmpty()? null : getImagesUri(postAssetList).get())
-                .videoUrl(post.getS3VideoUri())
-                .creatorId(post.getCreatorId())
-                .timeStamp(OffsetDateTime.now().toEpochSecond())
-                .boostedAt(postInteractionCreatedDto.getBoostedAt())
-                .build();
-
-        this.publisher.publishEvent(eventPostCreated);
     }
 
     public Post findByObjectS3KeyPrefix(String objectKeyPrefix){
@@ -143,31 +128,7 @@ public class PostService
             throw new RuntimeException("Failed To update Post Status to draft \n Post Id: " + postId);
     }
 
-
-    private static Optional<List<String>> getImagesUri(List<PostAsset> postAssetList) {
-        if (postAssetList == null) {
-            return null;
-        }
-        List<String> images = postAssetList.stream()
-                .filter(e -> e.getType().equalsIgnoreCase("image"))
-                .map(PostAsset::getS3AssetUri)
-                .toList();
-
-        return images.isEmpty() ? Optional.empty() : Optional.of(images);
-    }
-
-
-    private static String getThumbnail(List<PostAsset> postAssetList) {
-        if (postAssetList == null) {
-            return null;
-        }
-        return postAssetList.stream()
-                .filter(e -> e.getType().equalsIgnoreCase("thumbnail"))
-                .map(PostAsset::getS3AssetUri)
-                .findFirst()
-                .orElse(null);
-    }
-
+    @Transactional
     public void postUploadCompleted(Post postIn)
     {
         String objectS3Key= postIn.getObjectS3KeyPrefix();
@@ -187,35 +148,46 @@ public class PostService
         retrievalPost.setObjectS3KeySuffix(postIn.getObjectS3KeySuffix());
 
         this.postRepository.save(retrievalPost);
-    }
 
+//        Tell Interaction Context that post is created
+//        however if interaction fail so the Post storage also should be fail
+        PostInteractionCreatedDto postInteractionCreatedDto = postInteractionPort.postCreated(retrievalPost.getId());
+        if(postInteractionCreatedDto == null)
+        {
+//            the message should be get from Interaction
+            throw new RuntimeException("Interaction fail");
+        }
+
+//        Publish Event that Post is Created
+        List<PostAsset> postAssetList = this.postAssetRepo.findByPostId(retrievalPost.getId());
+        EventPostCreated eventPostCreated = EventPostCreated.builder()
+                .postId(retrievalPost.getId())
+                .thumbnailUrl(getThumbnail(postAssetList))
+                .ImageUrls(getImagesUri(postAssetList).isEmpty()? null : getImagesUri(postAssetList).get())
+                .videoUrl(retrievalPost.getS3VideoUri())
+                .creatorId(retrievalPost.getCreatorId())
+                .timeStamp(OffsetDateTime.now().toEpochSecond())
+                .boostedAt(postInteractionCreatedDto.getBoostedAt())
+                .build();
+
+        this.publisher.publishEvent(eventPostCreated);
+    }
 
     public String createPostIntent(Post post)
     {
-        UUID uuid = UUID.randomUUID();
-        String objectKeyPrefix = uuid + "_v";
-        String filePath = "posts/raw/" + objectKeyPrefix;
-        String preSignedUrl = generatePutPresignedUrl(filePath,BUCKET_NAME);
+        // Video URL
+        String objectName = UUID.randomUUID() + DELIMITER + "v" ;
+
+        String objectKeyPrefix = PostMapper.RAW_PATH.replace("<object_s3_name>", objectName) ;
+        post.setObjectS3KeyPrefix(objectKeyPrefix);
+
+        String preSignedUrl = generatePutPresignedUrl(objectKeyPrefix,BUCKET_NAME,s3Presigner);
 
         this.postRepository.save(post);
         return preSignedUrl;
 
     }
-    private String generatePutPresignedUrl(String filePath,String bucketName) {
-        PutObjectRequest.Builder putObjectRequestBuilder = PutObjectRequest.builder()
-                .bucket(bucketName )
-                .key(filePath+ ".mp4");
 
-        PutObjectRequest putObjectRequest = putObjectRequestBuilder.build();
-
-        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(60))
-                .putObjectRequest(putObjectRequest)
-                .build();
-
-        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
-        return presignedRequest.url().toString();
-    }
 
 
 }
