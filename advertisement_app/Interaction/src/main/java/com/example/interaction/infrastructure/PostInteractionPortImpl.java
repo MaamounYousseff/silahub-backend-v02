@@ -7,6 +7,7 @@ import com.example.post.api.PostInteractionPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +37,7 @@ public class PostInteractionPortImpl implements PostInteractionPort {
                     .totalUpvotes(0L)
                     .totalViews(0L)
                     .totalWatchSeconds(0L)
+                     .boostedAt(OffsetDateTime.now())
                     .build();
         }
 

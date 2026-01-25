@@ -12,20 +12,11 @@ public class PostMapper
     public static Post fromPostIntentCreateRequest(PostIntentCreateRequest request, UUID creatorId) {
         Post post = new Post();
 
-        // Basic info
         post.setCreatorId(creatorId);
         post.setTitle(request.getTitle());
         post.setDescription(request.getDescription());
         post.setIsVisible(request.getIsVisible());
         post.setStatus("pending");
-
-        // Video URL
-        String objectName = UUID.randomUUID() + DELIMITER + "v" ;
-
-        String objectKey =  RAW_PATH.replace("<object_s3_name>", objectName) ;
-        post.setObjectS3KeyPrefix(objectKey);
-
-        // Counts
         post.setImageCount((short) request.getImageCount());
         post.setThumbnailCount((short) request.getThumbnailCount());
 
