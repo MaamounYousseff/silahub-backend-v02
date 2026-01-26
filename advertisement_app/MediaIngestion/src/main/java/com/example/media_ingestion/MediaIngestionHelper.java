@@ -8,6 +8,8 @@ import software.amazon.awssdk.transfer.s3.S3TransferManager;
 import software.amazon.awssdk.transfer.s3.model.CompletedFileDownload;
 import software.amazon.awssdk.transfer.s3.model.DownloadFileRequest;
 import software.amazon.awssdk.transfer.s3.model.FileDownload;
+import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.concurrent.*;
@@ -114,5 +116,33 @@ public class MediaIngestionHelper
         executor.shutdown();
     }
 
+
+
+    public static  void uploadToS3(String bucketName, String key, String filePath,S3TransferManager transferManager) throws Exception {
+        String contentType = resolveContentType(key);
+
+        UploadFileRequest request = UploadFileRequest.builder()
+                .putObjectRequest(req -> req
+                        .bucket(bucketName)
+                        .key(key)
+                        .contentType(contentType))
+                .source(Paths.get(filePath))
+                .build();
+
+        transferManager.uploadFile(request).completionFuture().join();
+        log.info("Uploaded: {} ({})", key, contentType);
+    }
+
+    public static  String resolveContentType(String key) {
+        if (key.endsWith(".m3u8")) return "application/vnd.apple.mpegurl";
+        if (key.endsWith(".ts"))   return "video/mp2t";
+        return "application/octet-stream";
+    }
+
+    public static  String getVideoId(String objectKey)
+    {
+        String []str = objectKey.split("/");
+        return str[str.length-1];
+    }
 
 }

@@ -9,7 +9,6 @@ import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
-import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -18,6 +17,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 
+import static com.example.media_ingestion.MediaIngestionHelper.uploadToS3;
 import static com.example.media_ingestion.MediaIngestionService.*;
 
 @Slf4j
@@ -90,7 +90,7 @@ public class MediaIngestionWorker implements Runnable {
             Files.list(Paths.get(tempWorkerOutputDir)).forEach(path -> {
                 try {
                     String s3Key = s3OutputPathTemplate.replace("<file_name>",s3ObjectKeyName) + path.getFileName().toString();
-                    uploadToS3(S3_BUCKET_NAME, s3Key, path.toString());
+                    uploadToS3(S3_BUCKET_NAME, s3Key, path.toString(),transferManager);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -113,25 +113,7 @@ public class MediaIngestionWorker implements Runnable {
         }
     }
 
-    private void uploadToS3(String bucketName, String key, String filePath) throws Exception {
-        String contentType = resolveContentType(key);
 
-        UploadFileRequest request = UploadFileRequest.builder()
-                .putObjectRequest(req -> req
-                        .bucket(bucketName)
-                        .key(key)
-                        .contentType(contentType))
-                .source(Paths.get(filePath))
-                .build();
 
-        transferManager.uploadFile(request).completionFuture().join();
-        log.info("Uploaded: {} ({})", key, contentType);
-    }
-
-    private String resolveContentType(String key) {
-        if (key.endsWith(".m3u8")) return "application/vnd.apple.mpegurl";
-        if (key.endsWith(".ts"))   return "video/mp2t";
-        return "application/octet-stream";
-    }
 }
 

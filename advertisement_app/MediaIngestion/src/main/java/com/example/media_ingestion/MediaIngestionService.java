@@ -21,9 +21,6 @@ import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
-import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
-import software.amazon.awssdk.transfer.s3.model.FileUpload;
-import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -229,7 +226,7 @@ public class MediaIngestionService {
 
         // Upload master.m3u8 to S3
         String masterS3OutputPath = S3_OUTPUT_PATH_MASTER_INDEX.replace("<file_name>", getObjectKeyName(objectKey));
-        uploadToS3(S3_BUCKET_NAME, masterS3OutputPath, masterFilePath.toString());
+        uploadToS3(S3_BUCKET_NAME, masterS3OutputPath, masterFilePath.toString(),transferManager);
 
         try {
             Files.deleteIfExists(masterFilePath);
@@ -237,45 +234,4 @@ public class MediaIngestionService {
 
         log.info("master.m3u8 created and uploaded to S3: {}", masterS3OutputPath);
     }
-
-    private void uploadToS3(String bucketName, String key, String filePath) throws Exception {
-        log.info("Uploading to S3: bucket={}, key={}", bucketName, key);
-
-        String contentType = resolveContentType(key);
-
-        UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
-                .putObjectRequest(req -> req
-                        .bucket(bucketName)
-                        .key(key)
-                        .contentType(contentType)  //required , default value video type
-                )
-                .source(Paths.get(filePath))
-                .build();
-
-        FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
-        CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
-
-        log.info("Upload completed: {} with Content-Type={}", key, contentType);
-    }
-
-    private String resolveContentType(String key) {
-        if (key.endsWith(".m3u8")) {
-            return "application/vnd.apple.mpegurl";
-        }
-        if (key.endsWith(".ts")) {
-            return "video/mp2t";
-        }
-        if (key.endsWith(".mp4")) {
-            return "video/mp4";
-        }
-        return "application/octet-stream";
-    }
-
-    private String getVideoId(String objectKey)
-    {
-        String []str = objectKey.split("/");
-        return str[str.length-1];
-    }
-
-
 }
