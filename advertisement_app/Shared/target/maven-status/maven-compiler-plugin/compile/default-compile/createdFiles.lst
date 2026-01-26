@@ -1,0 +1,15 @@
+com\example\shared\interaction\InteractionEventListener.class
+com\example\shared\interaction\InteractionEventToggleUpvote.class
+com\example\shared\post\PostEventListener.class
+com\example\shared\SharedConfig.class
+com\example\shared\post\EventPostCreated.class
+com\example\shared\interaction\ToggleUpvoteState.class
+com\example\shared\interaction\InteractionEventToggleLike.class
+com\example\shared\interaction\ToggleLikeAction.class
+com\example\shared\SilahubResponseUtil.class
+com\example\shared\security\CurrentUserContext.class
+com\example\shared\interaction\InteractionEventPostWatched.class
+com\example\shared\SilahubResponse$SilahubResponseBuilder.class
+com\example\shared\post\EventPostCreated$EventPostCreatedBuilder.class
+com\example\shared\SilahubResponse.class
+com\example\shared\interaction\InteractionEventPostClicked.class

@@ -1,0 +1,4 @@
+com\example\app\security\UserContextImpl.class
+com\example\app\security\UserContext.class
+com\example\app\AuthenticationFilter.class
+com\example\app\App.class

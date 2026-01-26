@@ -1,0 +1,14 @@
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\MediaIngestionApp.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\MediaIngestionConfig.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\MediaIngestionHelper.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\MediaIngestionService.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\MediaIngestionWorker.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\OwnerIdentity.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\RequestParameters.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\ResponseElements.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\S3Bucket.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\S3Entity.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\S3EventNotification.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\S3EventRecord.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\S3Object.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\MediaIngestion\src\main\java\com\example\media_ingestion\sqsevent\UserIdentity.java

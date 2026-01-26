@@ -45,16 +45,16 @@ public class MediaIngestionHelper
     }
 
 
-
-    public static MediaIngestionWorker getTranscodinWorker1080p(S3TransferManager transferManager , String fileName, Double duration, String objectKeyName) throws IOException {
-        return  MediaIngestionWorker.builder()
-                .objectKeyName(objectKeyName)
-                .fileName(fileName)
-                .duration(duration)
-                .outputPathTemplate(OUTPUT_PATH_1080P_HQ)
+// change
+    public static MediaIngestionWorker getTranscodinWorker1080p(S3TransferManager transferManager , String tempFileName, Double rootVideoDuration, String rootObjectKeyName) throws IOException {
+        return MediaIngestionWorker.builder()
+                .s3ObjectKeyName(rootObjectKeyName)
+                .tempFileName(tempFileName)
+                .rootVideoDuration(rootVideoDuration)
+                .s3OutputPathTemplate(S3_OUTPUT_PATH_1080P_HQ)
                 .height(1080)
                 .width(1920)
-                .crf(23)
+                .crf(21)
                 .audioBitrate("192k")
                 .ffmpeg(new FFmpeg("ffmpeg"))
                 .ffprobe(new FFprobe("ffprobe"))
@@ -63,29 +63,12 @@ public class MediaIngestionHelper
     }
 
 
-    public static MediaIngestionWorker getTranscodinWorker720pMQ(S3TransferManager transferManager , String fileName, Double duration, String objectKeyName) throws IOException {
-        return  MediaIngestionWorker.builder()
-                .objectKeyName(objectKeyName)
-                .fileName(fileName)
-                .duration(duration)
-                .outputPathTemplate(OUTPUT_PATH_720P_MQ)
-                .height(720)
-                .width(1280)
-                .crf(28)
-                .audioBitrate("96k")
-                .ffmpeg(new FFmpeg("ffmpeg"))
-                .ffprobe(new FFprobe("ffprobe"))
-                .transferManager(transferManager)
-                .build();
-
-    }
-
-    public static MediaIngestionWorker getTranscodinWorker720pHQ(S3TransferManager transferManager , String fileName, Double duration, String objectKeyName) throws IOException {
+    public static MediaIngestionWorker getTranscodinWorker720pHQ(S3TransferManager transferManager , String tempFileName, Double rootVideoDuration, String rootObjectKeyName) throws IOException {
         return MediaIngestionWorker.builder()
-                .objectKeyName(objectKeyName)
-                .fileName(fileName)
-                .duration(duration)
-                .outputPathTemplate(OUTPUT_PATH_720P_HQ)
+                .s3ObjectKeyName(rootObjectKeyName)
+                .tempFileName(tempFileName)
+                .rootVideoDuration(rootVideoDuration)
+                .s3OutputPathTemplate(S3_OUTPUT_PATH_720P_HQ)
                 .height(720)
                 .width(1280)
                 .crf(23)
@@ -96,12 +79,13 @@ public class MediaIngestionHelper
                 .build();
     }
 
-    public static MediaIngestionWorker getTranscodinWorker360p(S3TransferManager transferManager , String fileName, Double duration, String objectKeyName) throws IOException {
+
+    public static MediaIngestionWorker getTranscodinWorker360p(S3TransferManager transferManager , String tempFileName, Double rootVideoDuration, String rootObjectKeyName) throws IOException {
         return MediaIngestionWorker.builder()
-                .objectKeyName(objectKeyName)
-                .fileName(fileName)
-                .duration(duration)
-                .outputPathTemplate(OUTPUT_PATH_360P_LQ)
+                .s3ObjectKeyName(rootObjectKeyName)
+                .tempFileName(tempFileName)
+                .rootVideoDuration(rootVideoDuration)
+                .s3OutputPathTemplate(S3_OUTPUT_PATH_360P_LQ)
                 .height(360)
                 .width(640)
                 .crf(32)
@@ -113,18 +97,18 @@ public class MediaIngestionHelper
     }
 
 
-    public static void runWorkers(MediaIngestionWorker w1080 , MediaIngestionWorker w720HQ, MediaIngestionWorker w720MQ, MediaIngestionWorker w360) throws ExecutionException, InterruptedException {
+
+
+    public static void runWorkers(MediaIngestionWorker w1080 , MediaIngestionWorker w720HQ,  MediaIngestionWorker w360) throws ExecutionException, InterruptedException {
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
 
         Future<?> f1 = executor.submit(w1080);
         Future<?> f2 = executor.submit(w720HQ);
-        Future<?> f3 = executor.submit(w720MQ);
         Future<?> f4 = executor.submit(w360);
 
         f1.get();
         f2.get();
-        f3.get();
         f4.get();
 
         executor.shutdown();

@@ -1,0 +1,13 @@
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\domain\model\Role.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\domain\model\User.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\domain\model\UserRoles.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\domain\repo\UserRepository.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\infrastructure\FeedCreatorDtoMapper.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\infrastructure\FeedCreatorPortImpl.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\infrastructure\UserRepositoryImpl.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\logic\UserAdminService.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\UserAdminConfig.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\web\UserAdminController.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\web\UserAdminExceptionHandler.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\web\UserDto.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\UserAdmin\src\main\java\com\example\useradmin\web\UserDtoMapper.java

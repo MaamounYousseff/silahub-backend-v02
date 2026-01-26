@@ -1,0 +1,17 @@
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\CorsConfig.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\command\ClickPost.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\command\ToggleLikePost.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\command\ToggleUpvotePost.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\command\WatchPost.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\Constant.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\model\PostInteraction.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\model\PostLike.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\model\PostUpvote.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\repo\PostInteractionRepo.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\repo\PostLikeRepo.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\domain\repo\PostUpvoteRepo.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\infrastructure\PostInteractionPortImpl.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\InteractionConfig.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\logic\InteractionConsumer.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\logic\InteractionService.java
+D:\SilaHub\backEnd\silahub-backend-v02\advertisement_app\Interaction\src\main\java\com\example\interaction\web\InteractionRestController.java

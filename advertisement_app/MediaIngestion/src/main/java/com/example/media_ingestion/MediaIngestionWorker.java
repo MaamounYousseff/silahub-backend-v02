@@ -9,13 +9,14 @@ import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
-import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
-import software.amazon.awssdk.transfer.s3.model.FileUpload;
 import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
+import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 
 import static com.example.media_ingestion.MediaIngestionService.*;
 
@@ -24,101 +25,113 @@ import static com.example.media_ingestion.MediaIngestionService.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MediaIngestionWorker implements Runnable {
-    private String objectKeyName;
-    private String fileName;
-    private double duration;
-    private String outputPathTemplate;
+
+    private String s3ObjectKeyName;
+    private String tempFileName;
+    private double rootVideoDuration;
+    private String s3OutputPathTemplate;
     private int height, width, crf;
     private String audioBitrate;
     private FFmpeg ffmpeg;
     private FFprobe ffprobe;
     private S3TransferManager transferManager;
 
-
     @Override
     public void run() {
-        // Each worker gets its own copy of the input file
         String workerTempFile = TEMP_FILE.replace(".mp4", "_" + Thread.currentThread().getId() + ".mp4");
 
         try {
-            // Copy original video to worker-specific temp file
-            Files.copy(Paths.get(TEMP_FILE), Paths.get(workerTempFile), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Paths.get(TEMP_FILE), Paths.get(workerTempFile), StandardCopyOption.REPLACE_EXISTING);
 
-            log.info("Starting transcoding: fileName={}, resolution={}x{}, crf={}", fileName, width, height, crf);
+            log.info("Starting HLS transcoding: {} {}x{}", tempFileName, width, height);
 
-            String outputPath = outputPathTemplate.replace("<file_name>", objectKeyName);
 
-            int totalChunks = (int) Math.ceil(duration / CHUNK_DURATION);
+            String tempWorkerOutputDir      = TEMP_WORKER_OUTPUT_DIRECTORY.replace("<Thread_ID>", String.valueOf(Thread.currentThread().getId()));
+            String tempSegmentPattern   = TEMP_SEGMENT_PATTERN.replace("<Thread_ID>", String.valueOf(Thread.currentThread().getId()));
+            String tempIndexPlaylistPath = TEMP_INDEX_PLAYLIST_PATH.replace("<Thread_ID>", String.valueOf(Thread.currentThread().getId()));
 
-            for (int i = 0; i < totalChunks; i++) {
-                double startTime = i * CHUNK_DURATION;
-                // Unique chunk filename per thread and per chunk
-                String chunkFileName =
-                        String.format("chunk_%s_%04d.mp4",
-                                Thread.currentThread().getName(),
-                                i);
-                String tempChunkFile = TEMP_CHUNK_DIR + "\\" + chunkFileName;
-                String s3Key = outputPath + chunkFileName;
+            Files.createDirectories(Paths.get(tempWorkerOutputDir));
 
-                log.info("Processing chunk {}/{}: startTime={}", i + 1, totalChunks, startTime);
+            FFmpegBuilder builder = new FFmpegBuilder()
+                    .setInput(workerTempFile)// video to convert
+                    .overrideOutputFiles(false)
 
-                FFmpegBuilder builder = new FFmpegBuilder()
-                        .setInput(workerTempFile)  // Use the worker-specific copy
-                        .overrideOutputFiles(true)
-                        .addOutput(tempChunkFile)
-                        .setStartOffset((long) (startTime * 1_000_000), TimeUnit.MICROSECONDS)
-                        .setDuration((long) (CHUNK_DURATION * 1_000_000), TimeUnit.MICROSECONDS)
-                        .addExtraArgs("-map", "0:v:0")
-                        .addExtraArgs("-map", "0:a?")
-                        .addExtraArgs("-ss", String.valueOf(startTime))
-                        .setVideoCodec("libx264")
-                        .setPreset("medium")
-                        .addExtraArgs("-crf", String.valueOf(crf))
-                        .addExtraArgs("-profile:v", "high")
-                        .addExtraArgs("-pix_fmt", "yuv420p")
-                        .setVideoFilter("scale=" + width + ":" + height)
-                        .setAudioCodec("aac")
-                        .setAudioBitRate(Integer.parseInt(audioBitrate.replace("k", "")) * 1000)
-                        .addExtraArgs("-force_key_frames", "expr:gte(t,n_forced*10)")
-                        .setFormat("mp4")
-                        .addExtraArgs("-movflags", "frag_keyframe+empty_moov")
-                        .done();
+                    .addOutput(tempIndexPlaylistPath)
+                    .setFormat("hls")
 
-                FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-                executor.createJob(builder).run();
+                    // HLS settings
+                    .addExtraArgs("-hls_time", String.valueOf(SEGMENT_DURATION))
+                    .addExtraArgs("-hls_playlist_type", "vod")
+                    .addExtraArgs("-hls_segment_filename", tempSegmentPattern)
 
-                uploadToS3(S3_BUCKET_NAME, s3Key, tempChunkFile);
-                Files.deleteIfExists(Paths.get(tempChunkFile));
-                log.info("Chunk {}/{} uploaded to S3: {}", i + 1, totalChunks, s3Key);
-            }
+                    //  Keyframe alignment  : Why important? Without this, seeking or switching segments can glitch in HLS players.
+                    .addExtraArgs("-g", "48") // Keyframes are full frames that can be used to jump or seek in the video
+                    .addExtraArgs("-sc_threshold", "0") // Makes scene changes ignored for keyframe placement, so segments are perfectly aligned.
 
-            log.info("Transcoding completed for resolution: {}x{}", width, height);
+                    // Video
+                    .setVideoCodec("libx264")
+                    .setPreset("medium")// Balance between speed and compression quality.
+                    .addExtraArgs("-crf", String.valueOf(crf))// Constant quality control (lower = better quality).
+                    .addExtraArgs("-profile:v", "high")
+                    .addExtraArgs("-pix_fmt", "yuv420p")
+                    .setVideoFilter("scale=" + width + ":" + height)
+
+                    // Audio
+                    .setAudioCodec("aac")
+                    .setAudioBitRate(Integer.parseInt(audioBitrate.replace("k", "")) * 1000)
+                    .done();
+
+            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
+            executor.createJob(builder).run();
+
+            log.info("HLS packaging finished, uploading files...");
+
+            // Upload all generated HLS files
+            Files.list(Paths.get(tempWorkerOutputDir)).forEach(path -> {
+                try {
+                    String s3Key = s3OutputPathTemplate.replace("<file_name>",s3ObjectKeyName) + path.getFileName().toString();
+                    uploadToS3(S3_BUCKET_NAME, s3Key, path.toString());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            log.info("Upload complete for resolution {}x{}", width, height);
+
+            // Cleanup
+            Files.walk(Paths.get(tempWorkerOutputDir))
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            // Delete the worker-specific temp copy
             try {
                 Files.deleteIfExists(Paths.get(workerTempFile));
             } catch (Exception ignored) {}
         }
     }
 
-
-
     private void uploadToS3(String bucketName, String key, String filePath) throws Exception {
-        log.info("Uploading to S3: bucket={}, key={}", bucketName, key);
+        String contentType = resolveContentType(key);
 
-        UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
-                .putObjectRequest(req -> req.bucket(bucketName).key(key))
+        UploadFileRequest request = UploadFileRequest.builder()
+                .putObjectRequest(req -> req
+                        .bucket(bucketName)
+                        .key(key)
+                        .contentType(contentType))
                 .source(Paths.get(filePath))
                 .build();
 
-        FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
-        CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
-
-        log.info("Upload completed: {}", key);
+        transferManager.uploadFile(request).completionFuture().join();
+        log.info("Uploaded: {} ({})", key, contentType);
     }
 
-
+    private String resolveContentType(String key) {
+        if (key.endsWith(".m3u8")) return "application/vnd.apple.mpegurl";
+        if (key.endsWith(".ts"))   return "video/mp2t";
+        return "application/octet-stream";
+    }
 }
 
