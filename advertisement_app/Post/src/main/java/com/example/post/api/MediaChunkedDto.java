@@ -8,4 +8,5 @@ public class MediaChunkedDto
 {
     private String objectKeyPrefix;
     private String objectKeySuffix;
+    private String masterHlsIndexUri;
 }

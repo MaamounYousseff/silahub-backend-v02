@@ -144,8 +144,8 @@ public class PostService
 
         Post retrievalPost = postOptional.get();
         retrievalPost.setStatus("active");
-        retrievalPost.setS3VideoUri(BUCKET_NAME+"/"+postIn.getObjectS3KeyPrefix()+"."+postIn.getObjectS3KeySuffix());
         retrievalPost.setObjectS3KeySuffix(postIn.getObjectS3KeySuffix());
+        retrievalPost.setS3VideoUri(postIn.getS3VideoUri());
 
         this.postRepository.save(retrievalPost);
 

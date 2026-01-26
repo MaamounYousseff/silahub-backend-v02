@@ -21,6 +21,7 @@ public class PostMediaIngestionPortImpl implements PostMediaIngestionPort
 //this line should change
             post.setObjectS3KeyPrefix(mediaChunkedDto.getObjectKeyPrefix());
             post.setObjectS3KeySuffix(mediaChunkedDto.getObjectKeySuffix());
+            post.setS3VideoUri(mediaChunkedDto.getMasterHlsIndexUri());
 
             this.postService.postUploadCompleted(post);
             return true;

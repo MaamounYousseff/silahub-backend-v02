@@ -168,10 +168,15 @@ public class MediaIngestionService {
             MediaChunkedDto mediaChunkedDto = new MediaChunkedDto();
             mediaChunkedDto.setObjectKeyPrefix(objectKeyPrefix);
             mediaChunkedDto.setObjectKeySuffix(objectKeySuffix);
+            mediaChunkedDto.setMasterHlsIndexUri(getMasterHlsIndexUri());
             postMediaIngestionPort.onVideoChunked(mediaChunkedDto);
         }
     }
 
+    private String getMasterHlsIndexUri()
+    {
+        return S3_BUCKET_NAME + "/" + S3_OUTPUT_PATH_MASTER_INDEX.replace("<file_name>",getObjectKeyName(objectKey));
+    }
 
     private String getObjectKeyPrefix(String objectKey) {
         String[] parts = objectKey.split("\\.");
@@ -187,6 +192,7 @@ public class MediaIngestionService {
         }
         return sb.toString();
     }
+
 
     private String getObjectKeySuffix(String objectKey)
     {
