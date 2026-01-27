@@ -10,7 +10,6 @@
         <module name="App" />
         <module name="SharedModuleTest" />
         <module name="UserAdmin" />
-        <module name="Test" />
         <module name="Interaction" />
         <module name="Post" />
         <module name="MediaIngestion" />
@@ -23,6 +22,7 @@
       <module name="Notification" target="21" />
       <module name="Security" target="21" />
       <module name="SharedKernel" target="21" />
+      <module name="Test" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
