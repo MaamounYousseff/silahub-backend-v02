@@ -29,7 +29,6 @@
         <module>Post</module>
 		<module>App</module>
 		<module>Shared</module>
-        <module>Test</module>
         <module>MediaIngestion</module>
 		<module>SharedModuleTest</module>
 	</modules>
