@@ -97,7 +97,7 @@ public class MediaIngestionService {
         Files.createDirectories(Paths.get(TEMP_SEGMENT_DIR));
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 10000)
     public void processMessages() {
         log.info("Polling SQS queue for messages");
 

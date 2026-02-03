@@ -1,0 +1,243 @@
+[{
+  "_id": {
+    "$binary": {
+      "base64": "v0xeDKwlJIebkd2ZnZ6Ztw==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770142053"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "rUOG6rpA9TnhuYcSzS3Hpg==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770142634"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "pUXU2oZE6ZeSPP0qVwDMhg==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770143071"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "QUACTqSFT66wgtwS3qkQlQ==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770143692"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "rEm64WwbL7lGd7SeHnDHow==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770144376"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "I0FhQCyKeQl0MfKhP+rMpQ==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770144769"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "HE9T7vTx+VqKAlG9wzeCpg==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770144907"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "rU03x0Dg8vDlRBH/34Dfkg==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770145131"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "3kZz9DTxLpPgTl+1/74fkw==",
+      "subType": "03"
+    }
+  },
+  "tempTotalLike": {
+    "$numberLong": "0"
+  },
+  "tempTotalUpvote": {
+    "$numberLong": "0"
+  },
+  "tempTotalClick": {
+    "$numberLong": "0"
+  },
+  "tempTotalWatchTime": {
+    "$numberLong": "0"
+  },
+  "scoreUpdateCount": {
+    "$numberLong": "1"
+  },
+  "boostedAt": {
+    "$numberLong": "1770145307"
+  },
+  "_class": "com.example.scoring.domain.model.PostInteractionStats"
+}]

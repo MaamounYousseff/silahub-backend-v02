@@ -38,7 +38,7 @@ public class AssetUploadWorker {
     private final String sqsQueueUrl = "https://sqs.eu-north-1.amazonaws.com/418962810364/post_service_asset_upload";
 
     // PHASE 1: POLL THE MESSAGES EVERY 20 s
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 15000)
     public void consumeAssetUploadMessages() {
         log.info("Asset Upload Worker - Starting to poll messages");
         try {
