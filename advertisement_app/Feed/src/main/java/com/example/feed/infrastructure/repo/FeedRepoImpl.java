@@ -222,7 +222,7 @@ public class FeedRepoImpl implements FeedRepo
             return; // nothing to update
         }
 
-        mongoTemplate.updateFirst(query, update, FeedPost.class);
+        mongoTemplate.upsert(query, update, FeedPost.class);
     }
 
 
