@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public class PostServiceHelper
 {
-    public static  String generatePutPresignedUrl(String filePath, String bucketName, S3Presigner s3Presigner) {
+    public static  String generatePutPresignedUrl(String filePath, String bucketName, S3Presigner s3Presigner, String contentTypeSuffix) {
         PutObjectRequest.Builder putObjectRequestBuilder = PutObjectRequest.builder()
                 .bucket(bucketName )
-                .key(filePath+ ".mp4");
+                .key(filePath+ contentTypeSuffix);
 
         PutObjectRequest putObjectRequest = putObjectRequestBuilder.build();
 
@@ -29,13 +29,14 @@ public class PostServiceHelper
     }
 
 
+
     public static Optional<List<String>> getImagesUri(List<PostAsset> postAssetList) {
         if (postAssetList == null) {
             return null;
         }
         List<String> images = postAssetList.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("image"))
-                .map(PostAsset::getS3AssetUri)
+                .map(PostAsset::getS3AssetUrl)
                 .toList();
 
         return images.isEmpty() ? Optional.empty() : Optional.of(images);
@@ -48,7 +49,7 @@ public class PostServiceHelper
         }
         return postAssetList.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("thumbnail"))
-                .map(PostAsset::getS3AssetUri)
+                .map(PostAsset::getS3AssetUrl)
                 .findFirst()
                 .orElse(null);
     }

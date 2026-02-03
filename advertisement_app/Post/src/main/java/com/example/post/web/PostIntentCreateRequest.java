@@ -4,24 +4,27 @@ package com.example.post.web;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
-@Getter
-@Setter
+
+@Getter @Setter
 public class PostIntentCreateRequest {
 
-    @Min(value = 0, message = "Number of images must be at least 0")
-    @Max(value = 3, message = "Number of images must be at most 3")
-    private int imageCount;
+    @Size(max = 3, message = "Cannot upload more than 3 images")
+    private List<@NotBlank(message = "Image content type cannot be blank")
+    @Pattern(regexp = "^image/(jpeg|png)$",
+            message = "Invalid image content type")
+            String> imageContentTypes;
 
-    @Min(value = 0, message = "Number of thumbnails must be at least 0")
-    @Max(value = 1, message = "Number of thumbnails must be at most 1")
-    private int thumbnailCount;
+    @Pattern(regexp = "^image/(jpeg|png)$",
+            message = "Invalid thumbnail content type")
+    private String thumbnailContentType;
 
-    @NotBlank(message = "title is required")
-    @Size(max = 255, message = "title must be at most 255 characters")
+    @NotBlank(message = "Title is required")
+    @Size(max = 255, message = "Title must be at most 255 characters")
     private String title;
 
-    @Size(max = 2000, message = "description must be at most 2000 characters")
+    @Size(max = 2000, message = "Description must be at most 2000 characters")
     private String description;
 
     @NotNull(message = "isVisible is required")

@@ -14,4 +14,6 @@ public interface FeedRepo
     boolean addUpvote(UUID postId, UUID promoterId, Long boostAt);
     boolean  updateUpvote(UUID postId, UUID promoterId);
     boolean removeUpvote(UUID postId, UUID promoterId);
+    boolean addNewAsset(UUID postId, String assetUrl,String type);
+    void update(FeedPost feed);
 }

@@ -1,5 +1,6 @@
 package com.example.post.infrastructure;
 
+import com.example.feed.api.FeedAssetUploadedPort;
 import com.example.post.logic.PostAssetService;
 import com.example.post.shared.S3EventNotification;
 import com.example.post.shared.S3EventRecord;
@@ -30,11 +31,14 @@ public class AssetUploadWorker {
     @Autowired
     @Qualifier("awsSqsObjectMapper")
     private ObjectMapper objectMapper;
+    @Autowired
+    private FeedAssetUploadedPort feedAssetUploadedPort;
+    private static final String REGION = "eu-north-1";
 
     private final String sqsQueueUrl = "https://sqs.eu-north-1.amazonaws.com/418962810364/post_service_asset_upload";
 
     // PHASE 1: POLL THE MESSAGES EVERY 20 s
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 5000)
     public void consumeAssetUploadMessages() {
         log.info("Asset Upload Worker - Starting to poll messages");
         try {
@@ -89,11 +93,18 @@ public class AssetUploadWorker {
 
             var s3AssetPrefix = str[0];
             var s3AssetSuffix = str[1];
-            var assetUri = BUCKET_NAME + S3_DELIMINETER + s3AssetPrefix + "." + s3AssetSuffix;
+            var assetUrl = String.format("https://%s.s3.%s.amazonaws.com/%s.%s",
+                    BUCKET_NAME,
+                    REGION,
+                    s3AssetPrefix,
+                    s3AssetSuffix);
 
             PostAsset postAsset = this.postAssetService.findByS3AssetPrefix(s3AssetPrefix);
-
-            this.postAssetService.update(postAsset.getId() , assetUri ,s3AssetSuffix);
+            postAsset.setS3AssetPrefix(s3AssetPrefix);
+            postAsset.setS3AssetSuffix(s3AssetSuffix);
+            postAsset.setS3AssetUrl(assetUrl);
+            this.postAssetService.update(postAsset);
+            this.feedAssetUploadedPort.assetUploaded(postAsset.getPostId(), postAsset.getS3AssetUrl(), postAsset.getType());
 
         } catch (Exception e) {
             log.error("Error processing asset message: " + e.getMessage());

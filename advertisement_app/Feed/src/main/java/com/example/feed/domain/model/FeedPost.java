@@ -27,7 +27,7 @@ public class FeedPost
     private String creatorLogoUrl;
     private String creatorName;
     private String thumbnailUrl;
-    private List<String> ImageUrls;
+    private List<String> imageUrls;
     private String whatsappNumber;
     private Float longitude;
     private Float latitude;
@@ -54,6 +54,8 @@ public class FeedPost
     private List<UUID> upvotedBy = new ArrayList<>();
 
     private Long boostedAt;
+
+    private String status;
 
 
     public static boolean exist(Optional<FeedPost> feedPostOptional)

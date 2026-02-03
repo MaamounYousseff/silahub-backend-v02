@@ -3,6 +3,7 @@ package com.example.interaction.web;
 import com.example.interaction.logic.InteractionService;
 import com.example.shared.SilahubResponse;
 import com.example.shared.SilahubResponseUtil;
+import com.example.shared.annotation.NotUsed;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,15 @@ public class InteractionRestController {
     private  InteractionService interactionService;
 
     // POST /api/interactions/click/{feedPostId}
+    @NotUsed
     @PostMapping("/click/{feedPostId}")
     public ResponseEntity<SilahubResponse> clickPost(@PathVariable UUID feedPostId) throws JsonProcessingException {
         interactionService.feedPostClicked(feedPostId);
         return ResponseEntity.ok(SilahubResponseUtil.success("","Post Liked", Map.of()));
     }
+
     // POST /api/interactions/watch/{feedPostId}
+    @NotUsed
     @PostMapping("/watch/{feedPostId}")
     public ResponseEntity<SilahubResponse> watchPost(@PathVariable UUID feedPostId, @RequestParam("watchTime") Long watchTime) throws JsonProcessingException {
         interactionService.feedPostWatched(feedPostId, watchTime);

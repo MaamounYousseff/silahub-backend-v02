@@ -56,7 +56,7 @@ CREATE TABLE post_assets (
 
     s3_asset_prefix VARCHAR NOT NULL,
     s3_asset_suffix VARCHAR,
-    s3_asset_uri VARCHAR,
+    s3_asset_url VARCHAR,
 
     CONSTRAINT post_assets_post_id_fkey
         FOREIGN KEY (post_id) REFERENCES posts(id)

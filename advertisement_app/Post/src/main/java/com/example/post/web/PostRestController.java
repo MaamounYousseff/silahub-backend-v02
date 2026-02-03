@@ -3,6 +3,7 @@ package com.example.post.web;
 
 import com.example.post.domain.Post;
 import com.example.post.logic.PostService;
+import com.example.post.logic.PreSignUrlsResult;
 import com.example.shared.SilahubResponse;
 import com.example.shared.SilahubResponseUtil;
 import com.example.shared.security.CurrentUserContext;
@@ -37,16 +38,9 @@ public class PostRestController
     @PostMapping("/post_intent")
     public ResponseEntity<SilahubResponse> createPostIntent(@Valid @RequestBody PostIntentCreateRequest postIntentCreateRequest)
     {
-        UUID userId = currentUserContext.getUserId();
-        Post post = fromPostIntentCreateRequest(postIntentCreateRequest, userId);
+        PreSignUrlsResult preSignUrlsResult = this.postService.createPostIntent(postIntentCreateRequest);
 
-        String preSignedUrl = this.postService.createPostIntent(post);
-
-        PostIntentCreateResponse response = new PostIntentCreateResponse();
-        response.setPreSignedUrl(preSignedUrl);
-        response.setContentType("video/mp4");
-
-        return ResponseEntity.ok(SilahubResponseUtil.success(response, "Post Intent created successfully", Map.of() ));
+        return ResponseEntity.ok(SilahubResponseUtil.success(preSignUrlsResult, "Post Intent created successfully", Map.of() ));
     }
 
     @GetMapping("/hi")

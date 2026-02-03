@@ -26,6 +26,14 @@
             <artifactId>Shared</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>SharedModuleTest</artifactId>
+            <version>${parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
 
 
         <dependency>

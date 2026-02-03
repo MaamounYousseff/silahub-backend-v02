@@ -126,4 +126,105 @@ public class FeedRepoImpl implements FeedRepo
     }
 
 
+    @Override
+    public boolean addNewAsset(UUID postId, String assetUrl, String type) {
+        try {
+            // Build query to find the post by postId
+            Query query = new Query(Criteria.where("postId").is(postId));
+
+            // Prepare the update
+            Update update = new Update();
+
+            // Set the asset depending on type
+            if ("image".equalsIgnoreCase(type)) {
+                update.addToSet("ImageUrls", assetUrl); // add to list
+            } else if ("thumbnail".equalsIgnoreCase(type)) {
+                update.set("thumbnailUrl", assetUrl); // set thumbnail
+            } else {
+                throw new IllegalArgumentException("Unknown asset type: " + type);
+            }
+
+            // Set fields only on insert
+            update.setOnInsert("postId", postId);
+            update.setOnInsert("timeStamp", System.currentTimeMillis());
+            update.setOnInsert("status", "pending"); // only if creating new post
+
+            // Upsert: insert if not exists, otherwise update
+            mongoTemplate.upsert(query, update, FeedPost.class);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void update(FeedPost feed) {
+
+        Query query = new Query(Criteria.where("postId").is(feed.getPostId()));
+        Update update = new Update();
+
+        // -------- Core identity / lifecycle --------
+        if (feed.getCreatorId() != null)
+            update.set("creatorId", feed.getCreatorId());
+
+        if (feed.getTimeStamp() != null)
+            update.set("timeStamp", feed.getTimeStamp());
+
+        if (feed.getStatus() != null)
+            update.set("status", feed.getStatus());
+
+        if (feed.getBoostedAt() != null)
+            update.set("boostedAt", feed.getBoostedAt());
+
+        // -------- Creator info --------
+        if (feed.getCreatorLogoUrl() != null)
+            update.set("creatorLogoUrl", feed.getCreatorLogoUrl());
+
+        if (feed.getCreatorName() != null)
+            update.set("creatorName", feed.getCreatorName());
+
+        if (feed.getWhatsappNumber() != null)
+            update.set("whatsappNumber", feed.getWhatsappNumber());
+
+        if (feed.getLongitude() != null)
+            update.set("longitude", feed.getLongitude());
+
+        if (feed.getLatitude() != null)
+            update.set("latitude", feed.getLatitude());
+
+        // -------- Counters / scoring --------
+        if (feed.getTempTotalLike() != null)
+            update.set("tempTotalLike", feed.getTempTotalLike());
+
+        if (feed.getTempTotalUpvote() != null)
+            update.set("tempTotalUpvote", feed.getTempTotalUpvote());
+
+        if (feed.getTempTotalClick() != null)
+            update.set("tempTotalClick", feed.getTempTotalClick());
+
+        if (feed.getTempTotalWatchTime() != null)
+            update.set("tempTotalWatchTime", feed.getTempTotalWatchTime());
+
+        if (feed.getScoreUpdateCount() != null)
+            update.set("scoreUpdateCount", feed.getScoreUpdateCount());
+
+        // -------- Engagement --------
+        if (feed.getLikeBy() != null )
+            update.set("likeBy", feed.getLikeBy());
+
+        if (feed.getUpvotedBy() != null )
+            update.set("upvotedBy", feed.getUpvotedBy());
+
+        // -------- Safety guard --------
+        if (update.getUpdateObject().isEmpty()) {
+            return; // nothing to update
+        }
+
+        mongoTemplate.updateFirst(query, update, FeedPost.class);
+    }
+
+
+
 }

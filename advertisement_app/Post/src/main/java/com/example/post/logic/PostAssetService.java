@@ -1,5 +1,6 @@
 package com.example.post.logic;
 
+import com.example.feed.api.FeedAssetUploadedPort;
 import com.example.post.domain.PostAsset;
 import com.example.post.domain.PostAssetRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ public class PostAssetService
 {
     @Autowired
     private PostAssetRepo postAssetRepo;
+    @Autowired
+    private FeedAssetUploadedPort feedAssetUploadedPort;
 
 
     public PostAsset findByS3AssetPrefix(String s3AssetPrefix)
@@ -24,10 +27,10 @@ public class PostAssetService
         return postAsset;
     }
 
-    public void update(UUID postAssetId , String assetUri ,String  s3AssetSuffix)
+    public void update(PostAsset postAsset)
     {
-        int row = this.postAssetRepo.update(postAssetId , assetUri ,s3AssetSuffix , "active");
+        int row = this.postAssetRepo.update(postAsset.getId() , postAsset.getS3AssetUrl() ,postAsset.getS3AssetSuffix() , "active");
         if (row == 0)
-            throw new RuntimeException("Failed to update PostAsset Status to ACTIVE \n PostAsset Id: " + postAssetId);
+            throw new RuntimeException("Failed to update PostAsset Status to ACTIVE \n PostAsset Id: " + postAsset.getPostId());
     }
 }

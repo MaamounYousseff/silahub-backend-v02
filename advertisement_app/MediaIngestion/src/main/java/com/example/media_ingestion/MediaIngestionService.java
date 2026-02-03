@@ -134,7 +134,7 @@ public class MediaIngestionService {
             String eventName = record.getEventName();
             if (eventName == null && !eventName.startsWith("ObjectCreated"))
             {
-                log.error("Invalid Event Name");
+                log.error("Received message:");
                 return;
             }
 

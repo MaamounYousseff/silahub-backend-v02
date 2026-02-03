@@ -17,8 +17,6 @@ public class EventPostCreated
 {
     private UUID postId ;
     private String videoUrl;
-    private String thumbnailUrl;
-    private List<String> ImageUrls;
     private UUID creatorId;
     private Long timeStamp;
     private Long boostedAt;

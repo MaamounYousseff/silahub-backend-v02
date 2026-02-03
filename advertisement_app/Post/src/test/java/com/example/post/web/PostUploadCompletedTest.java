@@ -101,7 +101,7 @@ public class PostUploadCompletedTest
         retrievalPost.setS3VideoUri(postIn.getObjectS3KeyPrefix()+ "." + postIn.getObjectS3KeySuffix());
         retrievalPost.setObjectS3KeySuffix(postIn.getObjectS3KeySuffix());
         this.postRepository.save(retrievalPost);
-        List<PostAsset> postAssetList = this.postAssetRepo.findByPostId(retrievalPost.getId());
+        List<PostAsset> postAssetList = this.postAssetRepo.findActiveByPostId(retrievalPost.getId());
         PostInteractionCreatedDto postInteractionCreatedDto = postInteractionPort.postCreated(retrievalPost.getId());
 
 //        Then
@@ -122,7 +122,7 @@ public class PostUploadCompletedTest
         postInteractionCreatedDto.setBoostedAt(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
 
 //        When
-        List<PostAsset> postAssetList = this.postAssetRepo.findByPostId(savedPost.getId());
+        List<PostAsset> postAssetList = this.postAssetRepo.findActiveByPostId(savedPost.getId());
         EventPostCreated eventPostCreated = EventPostCreated.builder()
                 .postId(savedPost.getId())
                 .thumbnailUrl(getThumbnail(postAssetList))

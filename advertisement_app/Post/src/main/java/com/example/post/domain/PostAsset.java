@@ -34,8 +34,8 @@ public class PostAsset {
     @Column(name = "s3_asset_suffix")
     private String s3AssetSuffix;
 
-    @Column(name = "s3_asset_uri")
-    private String s3AssetUri;
+    @Column(name = "s3_asset_url")
+    private String s3AssetUrl;
 
     @Builder.Default
     @Column(nullable = false)

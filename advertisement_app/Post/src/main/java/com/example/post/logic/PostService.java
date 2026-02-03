@@ -8,18 +8,12 @@ import com.example.post.web.PostMapper;
 import com.example.shared.post.EventPostCreated;
 import com.example.shared.security.CurrentUserContext;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,11 +153,8 @@ public class PostService
         }
 
 //        Publish Event that Post is Created
-        List<PostAsset> postAssetList = this.postAssetRepo.findByPostId(retrievalPost.getId());
         EventPostCreated eventPostCreated = EventPostCreated.builder()
                 .postId(retrievalPost.getId())
-                .thumbnailUrl(getThumbnail(postAssetList))
-                .ImageUrls(getImagesUri(postAssetList).isEmpty()? null : getImagesUri(postAssetList).get())
                 .videoUrl(retrievalPost.getS3VideoUri())
                 .creatorId(retrievalPost.getCreatorId())
                 .timeStamp(OffsetDateTime.now().toEpochSecond())
@@ -173,21 +164,84 @@ public class PostService
         this.publisher.publishEvent(eventPostCreated);
     }
 
-    public String createPostIntent(Post post)
-    {
-        // Video URL
-        String objectName = UUID.randomUUID() + DELIMITER + "v" ;
+    @Transactional
+    public PreSignUrlsResult createPostIntent(PostIntentCreateRequest postIntentCreateRequest) {
 
-        String objectKeyPrefix = PostMapper.RAW_PATH.replace("<object_s3_name>", objectName) ;
-        post.setObjectS3KeyPrefix(objectKeyPrefix);
+        Post post = fromPostIntentCreateRequest(postIntentCreateRequest, currentUserContext.getUserId());
 
-        String preSignedUrl = generatePutPresignedUrl(objectKeyPrefix,BUCKET_NAME,s3Presigner);
+        // ================= VIDEO =================
+        String videoObjectName = UUID.randomUUID() + DELIMITER + "v";
+        String videoS3Prefix = PostMapper.RAW_PATH.replace("<object_s3_name>", videoObjectName);
+        String videoPreSignUrl = generatePutPresignedUrl(videoS3Prefix, BUCKET_NAME, s3Presigner, ".mp4");
 
-        this.postRepository.save(post);
-        return preSignedUrl;
+        // ================= SAVE POST INTENT INFO=================
+        post.setObjectS3KeyPrefix(videoS3Prefix);
+        postRepository.save(post);
 
+        // ================= IMAGES =================
+        List<AssetPreSignUrlResult> imagePreSignUrlResults = new ArrayList<>();
+        for (int i = 0; i < postIntentCreateRequest.getImageContentTypes().size(); i++) {
+            String imageObjectName = UUID.randomUUID().toString();
+            String imageS3Prefix = PostMapper.ASSETS_IMAGE_PATH.replace("<object_s3_name>", imageObjectName);
+            String contentType = getS3Suffix(postIntentCreateRequest.getImageContentTypes().get(i));
+            String imagePreSignUrl = generatePutPresignedUrl(imageS3Prefix, BUCKET_NAME, s3Presigner, contentType);
+
+            AssetPreSignUrlResult assetImagePreSignUrlResult  = new AssetPreSignUrlResult();
+            assetImagePreSignUrlResult.setUrl(imagePreSignUrl);
+            assetImagePreSignUrlResult.setContentType(contentType);
+
+            imagePreSignUrlResults.add(assetImagePreSignUrlResult);
+
+            PostAsset postAsset = new PostAsset();
+            postAsset.setS3AssetPrefix(imageS3Prefix);
+            postAsset.setStatus("pending");
+            postAsset.setPostId(post.getId());
+            postAsset.setType("image");
+            postAssetRepo.save(postAsset);
+        }
+
+        // ================= THUMBNAIL =================
+        AssetPreSignUrlResult thumbnailPreSignUrlResult = new AssetPreSignUrlResult();
+
+        if (post.getThumbnailCount() > 0) {
+            String thumbnailObjectName = UUID.randomUUID().toString();
+            String thumbnailS3Prefix = PostMapper.ASSETS_THUMBNAIL_PATH.replace("<object_s3_name>", thumbnailObjectName);
+            String contentType = getS3Suffix(postIntentCreateRequest.getThumbnailContentType());
+            String thumbnailPreSignUrl = generatePutPresignedUrl(thumbnailS3Prefix, BUCKET_NAME, s3Presigner,contentType);
+            thumbnailPreSignUrlResult.setContentType(contentType);
+            thumbnailPreSignUrlResult.setUrl(thumbnailPreSignUrl);
+            PostAsset postAsset = new PostAsset();
+            postAsset.setS3AssetPrefix(thumbnailS3Prefix);
+            postAsset.setStatus("pending");
+            postAsset.setPostId(post.getId());
+            postAsset.setType("thumbnail");
+            postAssetRepo.save(postAsset);
+        }
+
+
+
+        // ================= RESULT =================
+        PreSignUrlsResult result = new PreSignUrlsResult();
+        result.setVideoPreSignUrl(videoPreSignUrl);
+        result.setImagePreSignUrls(imagePreSignUrlResults);
+        result.setThumbnailPreSignUrl(thumbnailPreSignUrlResult);
+
+        return result;
     }
+    private String getS3Suffix(String contentType) {
+        switch (contentType) {
+            case "image/jpeg":
+            case "thumbnail/jpeg":
+                return ".jpg";
 
+            case "image/png":
+            case "thumbnail/png":
+                return ".png";
+
+            default:
+                throw new IllegalArgumentException("Unsupported content type: " + contentType);
+        }
+    }
 
 
 }

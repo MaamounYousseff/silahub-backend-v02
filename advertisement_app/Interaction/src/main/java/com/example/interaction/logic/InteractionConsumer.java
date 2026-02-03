@@ -16,11 +16,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,14 +45,16 @@ public class InteractionConsumer
     private ObjectMapper objectMapper;
     @Autowired
     private ApplicationEventPublisher publisher;
+    @Autowired
+    @Qualifier("jmsObjectMapper")
+    private  ObjectMapper jmsObjectMapper;
 
 
-    @JmsListener(destination = TOPIC_LIKE_NAME)
+    @JmsListener(destination = TOPIC_LIKE_NAME, containerFactory = "jmsListenerFactory")
     @Transactional
-    public void postToggleLike(String json) {
-
+    public void postToggleLike(@Payload String jsonPayload) {
         try {
-            ToggleLikePost payload = objectMapper.readValue(json, ToggleLikePost.class);
+            ToggleLikePost payload = jmsObjectMapper.readValue(jsonPayload, ToggleLikePost.class);
             UUID explorerId = payload.getExplorerId();
             UUID postId = payload.getPostId();
 
@@ -56,11 +62,9 @@ public class InteractionConsumer
 
             adjustPostLikeCount(postId, action);
 
-            publishToggleLikeEvent(postId,explorerId, action);
-
-        } catch (JsonProcessingException e) {
-            log.error("Failed to parse ToggleLikePost JSON", e);
-            throw new RuntimeException(e); // Ensure rollback
+            publishToggleLikeEvent(postId,explorerId, action);}
+        catch (JsonProcessingException e) {
+            log.error(""+e.getMessage());
         }
     }
 
@@ -78,12 +82,13 @@ public class InteractionConsumer
     }
 
 
-    @JmsListener(destination = TOPIC_UPVOTE_NAME)
+    @JmsListener(destination = TOPIC_UPVOTE_NAME, containerFactory = "jmsListenerFactory")
     @Transactional
-    public void postToggleUpvote(String json) {
+    public void postToggleUpvote(@Payload String jsonPayload) {
 
         try {
-            ToggleUpvotePost payload = objectMapper.readValue(json, ToggleUpvotePost.class);
+            ToggleUpvotePost payload = jmsObjectMapper.readValue(jsonPayload, ToggleUpvotePost.class);
+
             UUID promoter = payload.getPromoterId();
             UUID postId = payload.getPostId();
 

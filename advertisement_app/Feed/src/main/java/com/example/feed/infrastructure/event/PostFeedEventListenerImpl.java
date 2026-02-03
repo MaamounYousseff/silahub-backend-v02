@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -40,12 +41,16 @@ public class PostFeedEventListenerImpl implements PostEventListener
         }
         FeedCreatorDto feedCreatorDto =  feedCreatorDtoOptional.get();
 
+        feedPost.setVideoUrl(eventPostCreated.getVideoUrl());
         feedPost.setCreatorLogoUrl(feedCreatorDto.getCreatorLogoUrl());
         feedPost.setCreatorName(feedCreatorDto.getCreatorName());
         feedPost.setLongitude(feedCreatorDto.getLongitude());
         feedPost.setLatitude(feedCreatorDto.getLatitude());
         feedPost.setWhatsappNumber(feedCreatorDto.getWhatsappNumber());
-        this.feedRepo.save(feedPost);
+        feedPost.setStatus("active");
+
+        feedRepo.update( feedPost );
+
         return;
     }
 
@@ -54,11 +59,7 @@ public class PostFeedEventListenerImpl implements PostEventListener
         return FeedPost.builder()
                 .postId(eventPostCreated.getPostId())
                 .creatorId(eventPostCreated.getCreatorId())
-
                 .videoUrl(eventPostCreated.getVideoUrl())
-                .thumbnailUrl(eventPostCreated.getThumbnailUrl())
-                .ImageUrls(eventPostCreated.getImageUrls())
-
                 .boostedAt(eventPostCreated.getBoostedAt())
                 .timeStamp(eventPostCreated.getTimeStamp())
                 .build();

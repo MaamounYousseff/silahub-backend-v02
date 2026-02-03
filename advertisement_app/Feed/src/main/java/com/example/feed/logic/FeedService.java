@@ -190,4 +190,11 @@ public class FeedService
         }
     }
 
+
+    public boolean addNewAsset(UUID postId, String assetUrl, String assetType)
+    {
+        this.feedRepo.addNewAsset(postId, assetUrl, assetType);
+        return true;
+    }
+
 }

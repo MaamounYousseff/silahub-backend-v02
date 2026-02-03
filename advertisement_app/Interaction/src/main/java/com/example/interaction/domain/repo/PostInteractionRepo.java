@@ -56,6 +56,7 @@ public interface PostInteractionRepo extends JpaRepository<PostInteraction, UUID
     void decrementUpvotes(UUID postId);
 
 
+
     @Modifying
     @Query("""
         UPDATE PostInteraction p
