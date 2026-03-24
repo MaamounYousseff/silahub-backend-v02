@@ -1,7 +1,5 @@
 # SilaHub — Developer Setup & Integration Guide
 
-> ⚠ **v0.5 · Internal Use Only**
-
 ---
 
 ## Table of Contents
