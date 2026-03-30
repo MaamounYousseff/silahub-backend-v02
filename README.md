@@ -1,6 +1,3 @@
-
-*Last updated: March 2026 — SILAHUB v0.5*
-=======
 # SilaHub — Developer Setup & Integration Guide
 
 ---
@@ -359,4 +356,3 @@ Folder: `feed`
 ---
 
 *SilaHub — Internal Developer Guide — v0.5*
->>>>>>> main
