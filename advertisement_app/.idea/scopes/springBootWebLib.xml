@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="springBootWebLib" pattern="org.springframework.boot.autoconfigure||lib:org.springframework.boot.autoconfigure.http.codec.*||lib:org.springframework.boot.autoconfigure.http.*||lib:org.springframework.boot.autoconfigure.http.client.*||lib:org.springframework.boot.autoconfigure.http.client.reactive.*||lib:org.springframework.boot.autoconfigure.jackson.*" />
+</component>

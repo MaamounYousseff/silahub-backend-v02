@@ -2,24 +2,43 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Scoring" />
+        <module name="App" />
+        <module name="SharedModuleTest" />
         <module name="UserAdmin" />
         <module name="Interaction" />
-        <module name="SharedKernel" />
+        <module name="Post" />
+        <module name="MediaIngestion" />
+        <module name="Scoring" />
+        <module name="Shared" />
         <module name="Feed" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Notification" target="21" />
+      <module name="Security" target="21" />
+      <module name="SharedKernel" target="21" />
+      <module name="Test" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="App" options="-parameters" />
       <module name="Feed" options="-parameters" />
       <module name="Interaction" options="-parameters" />
+      <module name="MediaIngestion" options="-parameters" />
+      <module name="Notification" options="-parameters" />
+      <module name="Post" options="-parameters" />
       <module name="Scoring" options="-parameters" />
+      <module name="Security" options="-parameters" />
+      <module name="Shared" options="-parameters" />
       <module name="SharedKernel" options="-parameters" />
+      <module name="SharedModuleTest" options="-parameters" />
+      <module name="Test" options="-parameters" />
       <module name="UserAdmin" options="-parameters" />
       <module name="advertisement_app" options="" />
     </option>

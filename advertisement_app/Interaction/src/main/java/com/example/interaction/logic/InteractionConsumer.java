@@ -1,0 +1,145 @@
+package com.example.interaction.logic;
+
+import com.example.interaction.domain.command.ClickPost;
+import com.example.interaction.domain.command.ToggleLikePost;
+import com.example.interaction.domain.command.ToggleUpvotePost;
+import com.example.interaction.domain.command.WatchPost;
+import com.example.interaction.domain.model.PostInteraction;
+import com.example.interaction.domain.repo.PostInteractionRepo;
+import com.example.interaction.domain.repo.PostLikeRepo;
+import com.example.interaction.domain.repo.PostUpvoteRepo;
+import com.example.shared.interaction.InteractionEventToggleUpvote;
+import com.example.shared.interaction.ToggleLikeAction;
+import com.example.shared.interaction.InteractionEventToggleLike;
+import com.example.shared.interaction.ToggleUpvoteState;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.OffsetDateTime;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.example.interaction.domain.Constant.*;
+
+
+@Service
+@Slf4j
+public class InteractionConsumer
+{
+    @Autowired
+    private PostInteractionRepo postInteractionsRepo;
+    @Autowired
+    private PostLikeRepo postLikeRepo;
+    @Autowired
+    private PostUpvoteRepo postUpvoteRepo;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private ApplicationEventPublisher publisher;
+    @Autowired
+    @Qualifier("jmsObjectMapper")
+    private  ObjectMapper jmsObjectMapper;
+
+
+    @JmsListener(destination = TOPIC_LIKE_NAME, containerFactory = "jmsListenerFactory")
+    @Transactional
+    public void postToggleLike(@Payload String jsonPayload) {
+        try {
+            ToggleLikePost payload = jmsObjectMapper.readValue(jsonPayload, ToggleLikePost.class);
+            UUID explorerId = payload.getExplorerId();
+            UUID postId = payload.getPostId();
+
+            ToggleLikeAction action = postLikeRepo.toggleLike(explorerId, postId);
+
+            adjustPostLikeCount(postId, action);
+
+            publishToggleLikeEvent(postId,explorerId, action);}
+        catch (JsonProcessingException e) {
+            log.error(""+e.getMessage());
+        }
+    }
+
+    private void adjustPostLikeCount(UUID postId, ToggleLikeAction action) {
+        switch (action) {
+            case INSERT, UPDATE_LIKED -> postInteractionsRepo.incrementLikes(postId);
+            case UPDATE_UNLIKED -> postInteractionsRepo.decrementLikes(postId);
+        }
+    }
+
+    private void publishToggleLikeEvent(UUID postId, UUID explorerId, ToggleLikeAction action) {
+        publisher.publishEvent(
+                new InteractionEventToggleLike(postId, explorerId , action )
+        );
+    }
+
+
+    @JmsListener(destination = TOPIC_UPVOTE_NAME, containerFactory = "jmsListenerFactory")
+    @Transactional
+    public void postToggleUpvote(@Payload String jsonPayload) {
+
+        try {
+            ToggleUpvotePost payload = jmsObjectMapper.readValue(jsonPayload, ToggleUpvotePost.class);
+
+            UUID promoter = payload.getPromoterId();
+            UUID postId = payload.getPostId();
+
+            ToggleUpvoteState action = postUpvoteRepo.toggleUpvote(promoter, postId);
+
+            InteractionEventToggleUpvote interactionEventToggleUpvote = adjustPostUpvoteCount(postId, promoter, action);
+            publisher.publishEvent(interactionEventToggleUpvote);
+
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse ToggleUpvoteState JSON", e);
+            throw new RuntimeException(e); // Ensure rollback
+        }
+    }
+
+    private InteractionEventToggleUpvote adjustPostUpvoteCount(UUID postId, UUID promoter ,ToggleUpvoteState action) {
+        switch (action) {
+            case INSERT-> {
+                OffsetDateTime boostedAt = OffsetDateTime.now();
+
+                postInteractionsRepo.incrementUpvotesAndBoost(postId,boostedAt);
+
+                Optional<PostInteraction> postInteractionOptional = postInteractionsRepo.findById(postId);
+                if(postInteractionOptional.isEmpty())
+                    throw new RuntimeException("post does not have interaction informations");
+
+                PostInteraction postInteraction = postInteractionOptional.get();
+
+                return new InteractionEventToggleUpvote(
+                        postId, promoter ,postInteraction.getTotalLikes(), postInteraction.getTotalUpvotes(),postInteraction.getTotalClicks(),postInteraction.getTotalWatchSeconds(), boostedAt.toEpochSecond()
+                );
+            }
+            case UPDATE_ADDED_UPVOTE-> postInteractionsRepo.incrementUpvotes(postId);
+            case UPDATE_REMOVED_UPVOTE -> postInteractionsRepo.decrementUpvotes(postId);
+        }
+        return new InteractionEventToggleUpvote(postId,promoter,action);
+    }
+
+
+    @JmsListener(destination = TOPIC_WATCH_NAME)
+    @Transactional
+    public void postWatch(String json) throws JsonProcessingException {
+        WatchPost watchPost = objectMapper.readValue(json, WatchPost.class);
+        this.postInteractionsRepo.incrementWatchSeconds(watchPost.getPostId(),watchPost.getWatchTime());
+    }
+
+
+    @JmsListener(destination = TOPIC_CLICK_NAME)
+    @Transactional
+    public void postClick(String json) throws JsonProcessingException {
+        ClickPost clickPost = objectMapper.readValue(json, ClickPost.class);
+        this.postInteractionsRepo.incrementClick(clickPost.getPostId());
+    }
+
+}

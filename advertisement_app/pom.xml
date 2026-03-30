@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>advertisement_app</name>
-	<description>SILAHub version 02 . Migrate to Clean Arch. with DDD rules</description>
+	<description>SILAHub version 03 .  Persistent to aws s3 |  Transcodin </description>
 	<url/>
 	<licenses>
 		<license/>
@@ -26,7 +26,11 @@
 		<module>Feed</module>
 		<module>Interaction</module>
 		<module>Scoring</module>
-		<module>SharedKernel</module>
+        <module>Post</module>
+		<module>App</module>
+		<module>Shared</module>
+        <module>MediaIngestion</module>
+		<module>SharedModuleTest</module>
 	</modules>
 	<scm>
 		<connection/>
@@ -36,7 +40,23 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.example</groupId>
+				<artifactId>Shared</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -44,6 +64,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -54,5 +80,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
 
 </project>

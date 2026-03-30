@@ -1,0 +1,22 @@
+package com.example.post.web;
+
+import com.example.post.logic.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootTest(classes = {
+        com.example.post.PostConfig.class,
+        com.example.shared.SharedConfig.class
+})
+@ComponentScan("com.example.post")
+class PostRestControllerTest
+{
+    @Autowired
+    private PostService postService;
+
+
+
+
+
+}

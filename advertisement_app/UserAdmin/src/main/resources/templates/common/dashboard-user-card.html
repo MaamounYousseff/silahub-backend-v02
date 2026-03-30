@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+
+    <link rel="stylesheet" th:href="@{/css/user-card.css}">
+</head>
+
+<body>
+
+<div class="card">
+    <div class="card-header">
+        <img th:src="${user.logoUrl}" alt="User Logo" class="avatar">
+        <h2 th:text="${user.username}"></h2>
+    </div>
+
+    <div class="card-body">
+
+        <div class="info-row">
+            <span class="label">Full Name:</span>
+            <span class="value" th:text="${user.firstName + ' ' + user.lastName}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Phone:</span>
+            <span class="value" th:text="${user.phoneNumber}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">WhatsApp:</span>
+            <span class="value" th:text="${user.whatsappNumber}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Rank:</span>
+            <span class="value" th:text="${user.rank}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Location:</span>
+            <span class="value" th:text="${user.latitude + ', ' + user.longitude}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Account Locked:</span>
+            <span class="value" th:text="${!user.accountNonLocked}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Enabled:</span>
+            <span class="value" th:text="${user.isEnabled}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Last Login:</span>
+            <span class="value" th:text="${user.lastLogin}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Login Attempts:</span>
+            <span class="value" th:text="${user.loginAttempts}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Created At:</span>
+            <span class="value" th:text="${user.createdAt}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Created By:</span>
+            <span class="value" th:text="${user.createdBy}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Updated At:</span>
+            <span class="value" th:text="${user.updatedAt}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Updated By:</span>
+            <span class="value" th:text="${user.updatedBy}"></span>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

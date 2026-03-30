@@ -1,0 +1,63 @@
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-activemq</artifactId>
+</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+		</dependency>
+
+
+
+
+# Enable ActiveMQ embedded broker
+spring.activemq.broker-url=vm://localhost?broker.persistent=false
+spring.activemq.in-memory=true
+spring.activemq.packages.trust-all=true
+
+
+persistent : true very important for durability .
+in-memory : active mq instance run in the same instance of the psring boot application.
+trust-all : check for the object package so if it is trusted it deserialize it else no. (security and protection)
+
+
+
+
+jmsTemplate.convertAndSend("myTopic", message);
+Connection connection = factory.createConnection();
+Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+MessageProducer producer = session.createProducer(destination);
+producer.send(message);
+4️⃣ Close everything automatically
+
+
+
+the activemq impl is over the jms start from the connection factory
+✅ JmsTemplate creates a NEW session for EVERY send operation
+For consumers, it works a little differently because Spring manages listener containers, not JmsTemplate.
+The listener container creates one or more JMS sessions depending on its configuration.
+Sessions are long-lived, not created per message.
+Each session has its own consumer (MessageConsumer) attached to the queue or topic.
+spring.jms.listener.concurrency=3-5
+the number of session  for the consumer should be the same of number of consumer. (bas hed chi  5eter la2an bye5od kel infra resource )
+
+
+
+2️⃣ Use ActiveMQ Artemis 6.x
+If you want Artemis (6.x):
+The embedded broker works, but no web console.
+You can monitor via JMX or the Artemis management API.
+Standalone Artemis has its own web console you can run separately.
+
+1️⃣ ActiveMQ Artemis
+2️⃣ JMX
+embedded Artemis with JMX   + Prometheus/Grafana so you can see queues, topics, and messages live in a modern tool, which is the 2025 way to monitor brokers.
+To have a web-based view, you need:
+Prometheus + Grafana dashboards (modern approach)
+
+JMX = desktop monitoring tool (powerful, low-level).
+Web console = browser-based GUI (user-friendly, visual).
+For Artemis embedded broker, you’ll need JMX or Prometheus/Grafana — no built-in web console.
+
+
+
